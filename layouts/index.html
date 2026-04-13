@@ -1,0 +1,161 @@
+{{ define "main" }}
+
+<style>
+  /* 整体容器 */
+  .note-container {
+    max-width: 800px; 
+    margin: 0 auto; 
+    padding: 2rem 1rem;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+  
+  /* 头部区域 */
+  .note-header {
+    text-align: center; 
+    margin-bottom: 3rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid #eee;
+  }
+  .note-title {
+    font-size: 2rem; 
+    margin-bottom: 0.5rem;
+    color: #1a1a1a;
+  }
+  .note-desc {
+    color: #666; 
+    font-size: 1rem;
+    margin-bottom: 1rem;
+  }
+  .badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    margin: 0 0.25rem;
+  }
+  .badge-green {
+    background: #dcfce7;
+    color: #166534;
+  }
+  .badge-orange {
+    background: #ffedd5;
+    color: #9a3412;
+  }
+
+  /* 文章列表 */
+  .section-title {
+    border-bottom: 2px solid #eee; 
+    padding-bottom: 0.5rem; 
+    font-size: 1.25rem; 
+    color: #333;
+    margin-bottom: 1.5rem;
+  }
+  
+  .post-item {
+    margin-bottom: 2rem; 
+    padding-bottom: 1.5rem; 
+    border-bottom: 1px solid #f0f0f0;
+  }
+  .post-item:last-child {
+    border-bottom: none;
+  }
+  
+  /* 标题行：标题+日期 */
+  .post-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 0.5rem;
+    gap: 1rem;
+  }
+  
+  /* 文章标题链接 - 重点样式 */
+  .post-title {
+    font-size: 1.125rem; 
+    font-weight: 600; 
+    color: #2563eb;  /* 蓝色 */
+    text-decoration: none;
+    line-height: 1.4;
+    transition: all 0.2s ease;
+    flex: 1;
+  }
+  .post-title:hover {
+    color: #1d4ed8;  /* 深蓝 */
+    text-decoration: underline;
+  }
+  
+  /* 日期 */
+  .post-date {
+    font-size: 0.875rem; 
+    color: #9ca3af;  /* 浅灰 */
+    white-space: nowrap;
+    font-family: monospace;
+  }
+  
+  /* 摘要 */
+  .post-summary {
+    margin: 0; 
+    color: #4b5563; 
+    font-size: 0.95rem; 
+    line-height: 1.6;
+  }
+  
+  /* 标签 */
+  .post-tags {
+    margin-top: 0.75rem;
+  }
+  .tag {
+    display: inline-block;
+    font-size: 0.75rem;
+    color: #6b7280;
+    background: #f3f4f6;
+    padding: 0.125rem 0.5rem;
+    border-radius: 4px;
+    margin-right: 0.5rem;
+  }
+</style>
+
+<div class="note-container">
+
+  <!-- 头部简介 -->
+  <div class="note-header">
+    <h1 class="note-title">{{ .Site.Title }}</h1>
+    {{ with .Site.Params.description }}
+    <p class="note-desc">{{ . }}</p>
+    {{ end }}
+    
+    <div>
+      <span class="badge badge-green">RHCA ✓</span>
+      <span class="badge badge-orange">CKA 备考中</span>
+    </div>
+  </div>
+
+  <!-- 文章列表 -->
+  <h2 class="section-title">学习日志</h2>
+
+  {{ range .Site.RegularPages.ByDate.Reverse }}
+  <article class="post-item">
+    <div class="post-header">
+      <a href="{{ .RelPermalink }}" class="post-title">
+        {{ .Title }}
+      </a>
+      <time class="post-date">{{ .Date.Format "2006-01-02" }}</time>
+    </div>
+    
+    <p class="post-summary">
+      {{ .Summary | truncate 120 }}
+    </p>
+    
+    {{ if .Params.tags }}
+    <div class="post-tags">
+      {{ range .Params.tags | first 3 }}
+        <span class="tag">#{{ . }}</span>
+      {{ end }}
+    </div>
+    {{ end }}
+  </article>
+  {{ end }}
+
+</div>
+
+{{ end }}

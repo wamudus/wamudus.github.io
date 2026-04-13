@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
-    <title>Posts on My New Hugo Site</title>
+    <title>Posts on K8s 学习手记</title>
     <link>http://localhost:1313/posts/</link>
-    <description>Recent content in Posts on My New Hugo Site</description>
+    <description>Recent content in Posts on K8s 学习手记</description>
     <generator>Hugo</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Sat, 11 Apr 2026 14:26:30 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 13 Apr 2026 09:22:00 +0800</lastBuildDate>
     <atom:link href="http://localhost:1313/posts/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>My First Post</title>
-      <link>http://localhost:1313/posts/my-first-post/</link>
-      <pubDate>Sat, 11 Apr 2026 14:26:30 +0800</pubDate>
-      <guid>http://localhost:1313/posts/my-first-post/</guid>
-      <description>&lt;h2 id=&#34;简介&#34;&gt;简介&lt;/h2&gt;&#xA;&lt;p&gt;这是 &lt;strong&gt;粗体&lt;/strong&gt; 文本，这是 &lt;em&gt;斜体&lt;/em&gt; 文本。&lt;/p&gt;&#xA;&lt;p&gt;访问 &lt;a href=&#34;https://gohugo.io&#34;&gt;Hugo&lt;/a&gt; 网站！&lt;/p&gt;</description>
+      <title>K8s 折腾记录：Startup Probe 权限排障与 YAML 字段陷阱</title>
+      <link>http://localhost:1313/posts/kubernetes/probe-debug/</link>
+      <pubDate>Mon, 13 Apr 2026 09:22:00 +0800</pubDate>
+      <guid>http://localhost:1313/posts/kubernetes/probe-debug/</guid>
+      <description>记录 K8s Startup Probe 权限排障过程，以及 restartPolicy 字段层级陷阱的发现</description>
     </item>
   </channel>
 </rss>

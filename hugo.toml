@@ -1,4 +1,31 @@
 baseURL = 'http://127.0.0.1'
 languageCode = 'zh-CN'
-title = 'My New Hugo Site'
-theme = 'ananke' 
+title = 'K8s 学习手记'
+theme = 'PaperMod'
+
+# 搜索配置 - 必须在 params 外面
+[outputs]
+  home = ["HTML", "RSS", "JSON"]
+
+[params]
+  description = '备考 CKA，记录学习过程'
+  
+  [params.fuseOpts]
+    isCaseSensitive = false
+    shouldSort = true
+    location = 0
+    distance = 1000
+    threshold = 0.4
+    minMatchCharLength = 0
+    keys = ["title", "permalink", "summary", "content"]
+[menu]
+  [[menu.main]]
+    identifier = "search"
+    name = "搜索"
+    url = "/search/"
+    weight = 10
+  [[menu.main]]
+    identifier = "posts"
+    name = "文章"
+    url = "/posts/"
+    weight = 20

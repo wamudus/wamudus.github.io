@@ -1,0 +1,29 @@
+/* 段落和标题之间的间距 */
+p + h2,
+p + h3,
+ul + h2,
+ul + h3,
+ol + h2,
+ol + h3,
+pre + h2,
+pre + h3 {
+  margin-top: 2rem !important;  /* 增加 2rem 间距 */
+}
+
+/* 标题和段落之间的间距（双向保险） */
+h2 + p,
+h3 + p,
+h2 + ul,
+h3 + ul,
+h2 + ol,
+h3 + ol,
+h2 + pre,
+h3 + pre {
+  margin-top: 1rem !important;
+}
+
+/* 代码块前后的间距 */
+pre {
+  margin-top: 1.5rem !important;
+  margin-bottom: 1.5rem !important;
+}
