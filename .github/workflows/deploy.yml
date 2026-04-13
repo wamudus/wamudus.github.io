@@ -20,7 +20,7 @@ jobs:
           extended: true
 
       - name: Build
-        run: hugo --minify
+        run: hugo --minify --baseURL "https://wamudus.github.io/"
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
