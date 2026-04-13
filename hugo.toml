@@ -3,6 +3,10 @@ languageCode = 'zh-CN'
 title = 'K8s 学习手记'
 theme = 'PaperMod'
 
+[taxonomies]
+  tag = 'tags'
+  category = 'categories'
+  
 # 搜索配置 - 必须在 params 外面
 [outputs]
   home = ["HTML", "RSS", "JSON"]
