@@ -126,7 +126,7 @@ pod/nginx-demo created (server dry run)
 
 
 
-### 发现华点:
+### 发现问题:
 
 -   容器级别显示 restartPolicy: OnFailure（原始输入被保留）
 -   但 Pod 级别显示 restartPolicy: Always（实际生效的是默认值！）
