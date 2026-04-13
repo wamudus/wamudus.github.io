@@ -1,12 +1,4 @@
 ---
-title: "标签"
-layout: "tags"
----
-EOF
-
-# 创建关于页面（介绍你的 CKA 学习路线）
-cat > content/about.md << 'EOF'
----
 title: "关于"
 layout: "single"
 ---
