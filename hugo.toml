@@ -1,4 +1,4 @@
-baseURL = 'http://127.0.0.1'
+baseURL = 'https://wamudus.github.io/'
 languageCode = 'zh-CN'
 title = 'K8s 学习手记'
 theme = 'PaperMod'
