@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Security on My New Hugo Site</title>
+    <link>http://localhost:1313/tags/security/</link>
+    <description>Recent content in Security on My New Hugo Site</description>
+    <generator>Hugo</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Mon, 13 Apr 2026 09:22:00 +0800</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/security/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>K8s 折腾记录：Startup Probe 权限排障与 YAML 字段陷阱</title>
+      <link>http://localhost:1313/posts/kubernetes/probe-debug/</link>
+      <pubDate>Mon, 13 Apr 2026 09:22:00 +0800</pubDate>
+      <guid>http://localhost:1313/posts/kubernetes/probe-debug/</guid>
+      <description>&lt;h2 id=&#34;现象pod-在假-running和重启之间循环&#34;&gt;现象：Pod 在&amp;quot;假 Running&amp;quot;和重启之间循环&lt;/h2&gt;&#xA;&lt;p&gt;早上部署 Nginx Pod，Startup Probe 一直报权限错误，同时发现重启策略好像没生效。&lt;/p&gt;&#xA;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;kubectl get pods -o wide -w&#xA;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h1 id=&#34;日志输出部分&#34;&gt;日志输出部分&lt;/h1&gt;&#xA;&lt;p&gt;NAME         READY   STATUS    RESTARTS   AGE   IP              NODE         NOMINATED NODE   READINESS GATES&#xA;nginx-demo   0/1     Running   0          1s    10.244.76.157   k8s-node-3   &lt;!-- raw HTML omitted --&gt;           &lt;!-- raw HTML omitted --&gt;&#xA;nginx-demo   0/1     Running   1 (1s ago)   34s   10.244.76.157   k8s-node-3   &lt;!-- raw HTML omitted --&gt;           &lt;!-- raw HTML omitted --&gt;&#xA;nginx-demo   0/1     Running   2 (1s ago)   64s   10.244.76.157   k8s-node-3   &lt;!-- raw HTML omitted --&gt;           &lt;!-- raw HTML omitted --&gt;&#xA;nginx-demo   0/1     Running   3 (1s ago)   94s   10.244.76.157   k8s-node-3   &lt;!-- raw HTML omitted --&gt;           &lt;!-- raw HTML omitted --&gt;&#xA;nginx-demo   0/1     Running   4 (1s ago)   2m4s   10.244.76.157   k8s-node-3   &lt;!-- raw HTML omitted --&gt;           &lt;!-- raw HTML omitted --&gt;&#xA;nginx-demo   0/1     Completed   4 (31s ago)   2m34s   10.244.76.157   k8s-node-3   &lt;!-- raw HTML omitted --&gt;           &lt;!-- raw HTML omitted --&gt;&#xA;nginx-demo   0/1     Completed   4             2m35s   10.244.76.157   k8s-node-3   &lt;!-- raw HTML omitted --&gt;           &lt;!-- raw HTML omitted --&gt;&#xA;nginx-demo   0/1     Completed   4             2m35s   10.244.76.157   k8s-node-3   &lt;!-- raw HTML omitted --&gt;           &lt;!-- raw HTML omitted --&gt;&#xA;nginx-demo   0/1     Completed   4             2m35s   10.244.76.157   k8s-node-3   &lt;!-- raw HTML omitted --&gt;           &lt;!-- raw HTML omitted --&gt;&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>
