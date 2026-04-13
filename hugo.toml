@@ -1,4 +1,4 @@
-baseURL = 'https://wamudus.github.io'
+baseURL = 'https://wamudus.github.io/'
 languageCode = 'zh-CN'
 title = 'K8s 学习手记'
 theme = 'PaperMod'
@@ -9,6 +9,10 @@ theme = 'PaperMod'
 
 [params]
   description = '备考 CKA，记录学习过程'
+  # 显示文章目录（TOC）
+  ShowToc = true
+  # 显示阅读时间
+  ShowReadingTime = true
   
   [params.fuseOpts]
     isCaseSensitive = false
@@ -18,14 +22,35 @@ theme = 'PaperMod'
     threshold = 0.4
     minMatchCharLength = 0
     keys = ["title", "permalink", "summary", "content"]
+
+# 菜单配置
 [menu]
   [[menu.main]]
-    identifier = "search"
-    name = "搜索"
-    url = "/search/"
+    identifier = "archives"
+    name = "归档"
+    url = "/archives/"
     weight = 10
+  
   [[menu.main]]
     identifier = "posts"
     name = "文章"
     url = "/posts/"
     weight = 20
+    
+  [[menu.main]]
+    identifier = "tags"
+    name = "标签"
+    url = "/tags/"
+    weight = 30
+    
+  [[menu.main]]
+    identifier = "search"
+    name = "搜索"
+    url = "/search/"
+    weight = 40
+    
+  [[menu.main]]
+    identifier = "about"
+    name = "关于"
+    url = "/about/"
+    weight = 50
