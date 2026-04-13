@@ -1,1 +1,22 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>K8s 学习笔记 on K8s 学习手记</title><link>https://wamudus.github.io/</link><description>Recent content in K8s 学习笔记 on K8s 学习手记</description><generator>Hugo</generator><language>zh-CN</language><lastBuildDate>Mon, 13 Apr 2026 09:22:00 +0800</lastBuildDate><atom:link href="https://wamudus.github.io/index.xml" rel="self" type="application/rss+xml"/><item><title>K8s 折腾记录：Startup Probe 权限排障与 YAML 字段陷阱</title><link>https://wamudus.github.io/posts/kubernetes/probe-debug/</link><pubDate>Mon, 13 Apr 2026 09:22:00 +0800</pubDate><guid>https://wamudus.github.io/posts/kubernetes/probe-debug/</guid><description>记录 K8s Startup Probe 权限排障过程，以及 restartPolicy 字段层级陷阱的发现</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>K8s 学习手记</title><link>https://wamudus.github.io/</link><description>Recent content on K8s 学习手记</description><generator>Hugo</generator><language>zh-CN</language><lastBuildDate>Mon, 13 Apr 2026 09:22:00 +0800</lastBuildDate><atom:link href="https://wamudus.github.io/index.xml" rel="self" type="application/rss+xml"/><item><title>K8s 折腾记录：Startup Probe 权限排障与 YAML 字段陷阱</title><link>https://wamudus.github.io/posts/kubernetes/probe-debug/</link><pubDate>Mon, 13 Apr 2026 09:22:00 +0800</pubDate><guid>https://wamudus.github.io/posts/kubernetes/probe-debug/</guid><description>记录 K8s Startup Probe 权限排障过程，以及 restartPolicy 字段层级陷阱的发现</description></item><item><title>标签</title><link>https://wamudus.github.io/about/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://wamudus.github.io/about/</guid><description>&lt;p&gt;EOF&lt;/p&gt;
+&lt;h1 id="创建关于页面介绍你的-cka-学习路线"&gt;创建关于页面（介绍你的 CKA 学习路线）&lt;/h1&gt;
+&lt;h2 id="cat--contentaboutmd--eof"&gt;cat &amp;gt; content/about.md &amp;laquo; &amp;lsquo;EOF&amp;rsquo;&lt;/h2&gt;
+&lt;h2 id="layout-single"&gt;title: &amp;ldquo;关于&amp;rdquo;
+layout: &amp;ldquo;single&amp;rdquo;&lt;/h2&gt;
+&lt;p&gt;这是我在准备 &lt;a href="https://www.cncf.io/certification/cka/"&gt;CKA (Certified Kubernetes Administrator)&lt;/a&gt; 认证过程中的技术踩坑记录。&lt;/p&gt;
+&lt;h2 id="记录原则"&gt;记录原则&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;每周 1-2 篇&lt;/strong&gt;：从实际故障中理解 K8s 设计哲学，而非死记硬背&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;问题闭环&lt;/strong&gt;：每篇都包含现象 → 排查 → 根因 → 验证的完整过程&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;持续更新&lt;/strong&gt;：面试时可作为&amp;quot;持续学习线路&amp;quot;的证据&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="当前进度"&gt;当前进度&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;input checked="" disabled="" type="checkbox"&gt; Pod 生命周期与探针机制&lt;/li&gt;
+&lt;li&gt;&lt;input disabled="" type="checkbox"&gt; Service 与 DNS 解析&lt;/li&gt;
+&lt;li&gt;&lt;input disabled="" type="checkbox"&gt; 存储与 StatefulSet&lt;/li&gt;
+&lt;li&gt;&lt;input disabled="" type="checkbox"&gt; 网络策略与 CNI&lt;/li&gt;
+&lt;li&gt;&lt;input disabled="" type="checkbox"&gt; 集群升级与备份&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;em&gt;最后更新：2026-04-13&lt;/em&gt;&lt;/p&gt;</description></item><item><title>标签</title><link>https://wamudus.github.io/tags/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://wamudus.github.io/tags/</guid><description/></item></channel></rss>
