@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>K8s 学习手记</title><link>https://wamudus.github.io/</link><description>Recent content on K8s 学习手记</description><generator>Hugo</generator><language>zh-CN</language><lastBuildDate>Tue, 14 Apr 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://wamudus.github.io/index.xml" rel="self" type="application/rss+xml"/><item><title>K8s rollout 回滚机制的一个反直觉现象</title><link>https://wamudus.github.io/k8s-rollout-review/</link><pubDate>Tue, 14 Apr 2026 00:00:00 +0000</pubDate><guid>https://wamudus.github.io/k8s-rollout-review/</guid><description>&lt;h2 id="原本打算记录deployment-rollout-undo回滚机制"&gt;原本打算记录Deployment rollout undo回滚机制&lt;/h2&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>实验记录 on K8s 学习手记</title><link>https://wamudus.github.io/categories/%E5%AE%9E%E9%AA%8C%E8%AE%B0%E5%BD%95/</link><description>Recent content in 实验记录 on K8s 学习手记</description><generator>Hugo</generator><language>zh-CN</language><lastBuildDate>Tue, 14 Apr 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://wamudus.github.io/categories/%E5%AE%9E%E9%AA%8C%E8%AE%B0%E5%BD%95/index.xml" rel="self" type="application/rss+xml"/><item><title>K8s rollout 回滚机制的一个反直觉现象</title><link>https://wamudus.github.io/k8s-rollout-review/</link><pubDate>Tue, 14 Apr 2026 00:00:00 +0000</pubDate><guid>https://wamudus.github.io/k8s-rollout-review/</guid><description>&lt;h2 id="原本打算记录deployment-rollout-undo回滚机制"&gt;原本打算记录Deployment rollout undo回滚机制&lt;/h2&gt;
 &lt;h2 id="环境信息可复现"&gt;环境信息（可复现）&lt;/h2&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;strong&gt;K8s 版本&lt;/strong&gt;: v1.35.3 (kubectl client v1.35.3)&lt;/li&gt;
@@ -32,20 +32,4 @@ revision记录
 &lt;h4 id="2-回滚验证"&gt;2. 回滚验证&lt;/h4&gt;
 &lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;kubectl rollout undo --to-revision&lt;span style="color:#f92672"&gt;=&lt;/span&gt;&lt;span style="color:#ae81ff"&gt;4&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;kubectl rollout undo --to-revision&lt;span style="color:#f92672"&gt;=&lt;/span&gt;&lt;span style="color:#ae81ff"&gt;9&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;img alt="undo_3" loading="lazy" src="https://wamudus.github.io/k8s-rollout-review/undo_3.png"&gt;&lt;/p&gt;</description></item><item><title>K8s 折腾记录：Startup Probe 权限排障与 YAML 字段陷阱</title><link>https://wamudus.github.io/posts/probe-debug/</link><pubDate>Mon, 13 Apr 2026 09:22:00 +0800</pubDate><guid>https://wamudus.github.io/posts/probe-debug/</guid><description>记录 K8s Startup Probe 权限排障过程，以及 restartPolicy 字段层级陷阱的发现</description></item><item><title>关于</title><link>https://wamudus.github.io/about/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://wamudus.github.io/about/</guid><description>&lt;p&gt;这是我在准备 &lt;a href="https://www.cncf.io/certification/cka/"&gt;CKA (Certified Kubernetes Administrator)&lt;/a&gt; 认证过程中的技术踩坑记录。&lt;/p&gt;
-&lt;h2 id="记录原则"&gt;记录原则&lt;/h2&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;每周 1-2 篇&lt;/strong&gt;：从实际故障中理解 K8s 设计哲学，而非死记硬背&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;问题闭环&lt;/strong&gt;：每篇都包含现象 → 排查 → 根因 → 验证的完整过程&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;持续更新&lt;/strong&gt;：面试时可作为&amp;quot;持续学习线路&amp;quot;的证据&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h2 id="当前进度"&gt;当前进度&lt;/h2&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;input checked="" disabled="" type="checkbox"&gt; Pod 生命周期与探针机制&lt;/li&gt;
-&lt;li&gt;&lt;input disabled="" type="checkbox"&gt; Service 与 DNS 解析&lt;/li&gt;
-&lt;li&gt;&lt;input disabled="" type="checkbox"&gt; 存储与 StatefulSet&lt;/li&gt;
-&lt;li&gt;&lt;input disabled="" type="checkbox"&gt; 网络策略与 CNI&lt;/li&gt;
-&lt;li&gt;&lt;input disabled="" type="checkbox"&gt; 集群升级与备份&lt;/li&gt;
-&lt;/ul&gt;
-&lt;hr&gt;
-&lt;p&gt;&lt;em&gt;最后更新：2026-04-13&lt;/em&gt;&lt;/p&gt;</description></item></channel></rss>
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;img alt="undo_3" loading="lazy" src="https://wamudus.github.io/k8s-rollout-review/undo_3.png"&gt;&lt;/p&gt;</description></item></channel></rss>
