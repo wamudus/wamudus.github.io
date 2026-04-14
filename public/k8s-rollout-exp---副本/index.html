@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto" data-theme="auto">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="noindex, nofollow">
+<title>Deployment Rollback 机制验证：从失效场景到回滚边界 | K8s 学习手记</title>
+<meta name="keywords" content="">
+<meta name="description" content="实验目标
+验证 Deployment 的 rollout undo 在以下场景的有效性：
+
+正常回滚：镜像版本回退
+中断恢复：更新过程中强制中断（模拟网络抖动）
+历史边界：revision 被 GC 后的回滚行为
+
+为什么记这个
+之前使用或者看官方文档都是用现成的yaml文件 kubectl apply，现在发现rollout配合YAML里的几个参数，能在发版炸了的瞬间实现秒级回滚，实用。
+环境信息（可复现）
+
+K8s 版本: v1.35.3 (kubectl client v1.35.3)
+集群规模: 一主两从测试环境
+关键配置:
+
+revisionHistoryLimit: 10      # 设置最多留存历史修改版本方便测试GC，回滚时有选择, 如果为0则不记录历史版本
+strategy:
+  rollingUpdate:
+    maxSurge: 25%            # 更新时允许超出的比例
+    maxUnavailable: 25%      # 最大不可用比例
+terminationGracePeriodSeconds: 30  # 优雅停机， pod删除时最大宽限时间
+新建实验环境
+&ndash;record 的作用是把&quot;你执行了什么命令&quot;记录到 Deployment 的元数据里，方便事后追溯
+初始状态
+kubectl scale deployment  nginx-deployment --replicas=3 
+kubectl rollout history deployment/nginx-deployment # 输出: revision 1 (原始部署)
+REVISION  CHANGE-CAUSE
+1         kubectl scale deployment nginx-deployment --replicas=3 --record=true
+实验过程
+将镜像指向v1.0版本并验证revision修改记录是否生成">
+<meta name="author" content="">
+<link rel="canonical" href="http://localhost:1313/k8s-rollout-exp---%E5%89%AF%E6%9C%AC/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.9e010bc22ef5794c0560b82f657f315607f24d8b05e0088e95b900c22246f5c0.css" integrity="sha256-ngELwi71eUwFYLgvZX8xVgfyTYsF4AiOlbkAwiJG9cA=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/k8s-rollout-exp---%E5%89%AF%E6%9C%AC/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+                color-scheme: dark;
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .toc {
+                background: var(--entry);
+            }
+        }
+
+    </style>
+</noscript>
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.querySelector("html").dataset.theme = 'dark';
+    } else if (localStorage.getItem("pref-theme") === "light") {
+       document.querySelector("html").dataset.theme = 'light';
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.querySelector("html").dataset.theme = 'dark';
+    } else {
+        document.querySelector("html").dataset.theme = 'light';
+    }
+
+</script>
+</head>
+<body id="top">
+    <header class="header">
+    <nav class="header-nav">
+        <div class="logo">
+            <a href="http://localhost:1313/" accesskey="h" title="K8s 学习手记 (Alt + H)">K8s 学习手记</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" class="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg class="moon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg class="sun" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu" class="menu">
+            <li>
+                <a href="http://localhost:1313/archives/" title="归档">
+                    <span>归档</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/posts/" title="文章">
+                    <span>文章</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/tags/" title="标签">
+                    <span>标签</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/search/" title="搜索 (Alt &#43; /)" accesskey=/>
+                    <span>搜索</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/about/" title="关于">
+                    <span>关于</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      Deployment Rollback 机制验证：从失效场景到回滚边界
+    </h1>
+    <div class="post-meta"><span title='2026-04-14 00:00:00 +0000 UTC'>April 14, 2026</span>&nbsp;·&nbsp;<span>1 min</span>
+
+</div>
+  </header> <details class="toc" >
+    <summary accesskey="c" title="(Alt + C)">
+        <span class="title">Table of Contents</span>
+    </summary>
+
+    <div class="inner"><ul>
+            <li>
+                <a href="#%e5%ae%9e%e9%aa%8c%e7%9b%ae%e6%a0%87" aria-label="实验目标">实验目标</a></li>
+            <li>
+                <a href="#%e4%b8%ba%e4%bb%80%e4%b9%88%e8%ae%b0%e8%bf%99%e4%b8%aa" aria-label="为什么记这个">为什么记这个</a></li>
+            <li>
+                <a href="#%e7%8e%af%e5%a2%83%e4%bf%a1%e6%81%af%e5%8f%af%e5%a4%8d%e7%8e%b0" aria-label="环境信息（可复现）">环境信息（可复现）</a></li>
+            <li>
+                <a href="#%e6%96%b0%e5%bb%ba%e5%ae%9e%e9%aa%8c%e7%8e%af%e5%a2%83" aria-label="新建实验环境">新建实验环境</a></li>
+            <li>
+                <a href="#%e5%ae%9e%e9%aa%8c%e8%bf%87%e7%a8%8b" aria-label="实验过程">实验过程</a>
+            </li>
+        </ul>
+    </div>
+</details>
+
+  <div class="post-content md-content"><h2 id="实验目标">实验目标<a hidden class="anchor" aria-hidden="true" href="#实验目标">#</a></h2>
+<p>验证 Deployment 的 <code>rollout undo</code> 在以下场景的有效性：</p>
+<ol>
+<li><strong>正常回滚</strong>：镜像版本回退</li>
+<li><strong>中断恢复</strong>：更新过程中强制中断（模拟网络抖动）</li>
+<li><strong>历史边界</strong>：revision 被 GC 后的回滚行为</li>
+</ol>
+<h2 id="为什么记这个">为什么记这个<a hidden class="anchor" aria-hidden="true" href="#为什么记这个">#</a></h2>
+<p>之前使用或者看官方文档都是用现成的yaml文件 <code>kubectl apply</code>，现在发现<code>rollout</code>配合YAML里的几个参数，能在发版炸了的瞬间实现秒级回滚，实用。</p>
+<h2 id="环境信息可复现">环境信息（可复现）<a hidden class="anchor" aria-hidden="true" href="#环境信息可复现">#</a></h2>
+<ul>
+<li><strong>K8s 版本</strong>: v1.35.3 (kubectl client v1.35.3)</li>
+<li><strong>集群规模</strong>: 一主两从测试环境</li>
+<li><strong>关键配置</strong>:</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">revisionHistoryLimit</span>: <span style="color:#ae81ff">10</span>      <span style="color:#75715e"># 设置最多留存历史修改版本方便测试GC，回滚时有选择, 如果为0则不记录历史版本</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">strategy</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">rollingUpdate</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">maxSurge</span>: <span style="color:#ae81ff">25</span><span style="color:#ae81ff">%           </span> <span style="color:#75715e"># 更新时允许超出的比例</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">maxUnavailable</span>: <span style="color:#ae81ff">25</span><span style="color:#ae81ff">%     </span> <span style="color:#75715e"># 最大不可用比例</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">terminationGracePeriodSeconds</span>: <span style="color:#ae81ff">30</span>  <span style="color:#75715e"># 优雅停机， pod删除时最大宽限时间</span>
+</span></span></code></pre></div><h2 id="新建实验环境">新建实验环境<a hidden class="anchor" aria-hidden="true" href="#新建实验环境">#</a></h2>
+<p>&ndash;record 的作用是把&quot;你执行了什么命令&quot;记录到 Deployment 的元数据里，方便事后追溯
+<strong>初始状态</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl scale deployment  nginx-deployment --replicas<span style="color:#f92672">=</span><span style="color:#ae81ff">3</span> 
+</span></span><span style="display:flex;"><span>kubectl rollout history deployment/nginx-deployment <span style="color:#75715e"># 输出: revision 1 (原始部署)</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>REVISION  CHANGE-CAUSE
+</span></span><span style="display:flex;"><span>1         kubectl scale deployment nginx-deployment --replicas=3 --record=true
+</span></span></code></pre></div><h2 id="实验过程">实验过程<a hidden class="anchor" aria-hidden="true" href="#实验过程">#</a></h2>
+<p>将镜像指向v1.0版本并验证revision修改记录是否生成</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 初始：my-nginx (rev 1)</span>
+</span></span><span style="display:flex;"><span>kubectl set image deployment/nginx-deployment hello-world-nginx<span style="color:#f92672">=</span>quay.io/redhattraining/hello-world-nginx:v1.0 --record
+</span></span></code></pre></div><p>验证revision是否计入元数据</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl rollout history deployment/nginx-deployment
+</span></span></code></pre></div><p><img alt="kubectl rollout history输出" loading="lazy" src="/k8s-rollout-exp---%E5%89%AF%E6%9C%AC/rollout_revision_1.png"></p>
+<p>查看详细信息</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span> kubectl rollout history deployment/nginx-deployment --revision<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>
+</span></span></code></pre></div><p><img alt="kubectl rollout history &ndash;revision=1输出" loading="lazy" src="/k8s-rollout-exp---%E5%89%AF%E6%9C%AC/ScreenShot_2026-04-14_161838_165.png">
+生成新的revision</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl set image deployment/nginx hello-world-nginx<span style="color:#f92672">=</span>quay.io/redhattraining/hello-world-nginx:latest --record
+</span></span></code></pre></div><p><img alt="kubectl rollout history输出" loading="lazy" src="/k8s-rollout-exp---%E5%89%AF%E6%9C%AC/ScreenShot_2026-04-14_164850_062.png"></p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2026 <a href="http://localhost:1313/">K8s 学习手记</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" id="top-link" class="top-link hidden" aria-label="go to top" title="Go to Top (Alt + G)" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevrons-up">
+        <polyline points="17 11 12 6 7 11"></polyline>
+        <polyline points="17 18 12 13 7 18"></polyline>
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu');
+    if (menu) {
+        
+        const scrollPosition = localStorage.getItem("menu-scroll-position");
+        if (scrollPosition) {
+            menu.scrollLeft = parseInt(scrollPosition, 10);
+        }
+        
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var toplink = document.getElementById("top-link");
+    window.onscroll = function () {
+        const scrollThreshold = window.innerHeight;
+        if (document.body.scrollTop > scrollThreshold || document.documentElement.scrollTop > scrollThreshold) {
+            toplink.classList.remove("hidden");
+        } else {
+            toplink.classList.add("hidden");
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        const html = document.querySelector("html");
+        if (html.dataset.theme === "dark") {
+            html.dataset.theme = 'light';
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            html.dataset.theme = 'dark';
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>
