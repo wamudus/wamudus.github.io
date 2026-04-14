@@ -2,6 +2,7 @@
 title: "K8s rollout 回滚机制的一个反直觉现象"
 date: 2026-04-14
 categories: ["k8s", "实验记录"]
+tags: ["k8s", "cka", "troubleshooting"]
 ---
 ## 原本打算记录Deployment rollout undo回滚机制
 ## 环境信息（可复现）
