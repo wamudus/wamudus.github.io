@@ -6,20 +6,62 @@
     <description>Recent content in Tags on K8s 学习手记</description>
     <generator>Hugo</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Mon, 13 Apr 2026 09:22:00 +0800</lastBuildDate>
+    <lastBuildDate>Wed, 15 Apr 2026 11:24:00 +0800</lastBuildDate>
     <atom:link href="http://localhost:1313/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Cka</title>
-      <link>http://localhost:1313/tags/cka/</link>
-      <pubDate>Mon, 13 Apr 2026 09:22:00 +0800</pubDate>
-      <guid>http://localhost:1313/tags/cka/</guid>
+      <title>Ansible</title>
+      <link>http://localhost:1313/tags/ansible/</link>
+      <pubDate>Wed, 15 Apr 2026 11:24:00 +0800</pubDate>
+      <guid>http://localhost:1313/tags/ansible/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Kubernetes</title>
+      <link>http://localhost:1313/tags/kubernetes/</link>
+      <pubDate>Wed, 15 Apr 2026 11:24:00 +0800</pubDate>
+      <guid>http://localhost:1313/tags/kubernetes/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Metrics-Server</title>
+      <link>http://localhost:1313/tags/metrics-server/</link>
+      <pubDate>Wed, 15 Apr 2026 11:24:00 +0800</pubDate>
+      <guid>http://localhost:1313/tags/metrics-server/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Tls</title>
+      <link>http://localhost:1313/tags/tls/</link>
+      <pubDate>Wed, 15 Apr 2026 11:24:00 +0800</pubDate>
+      <guid>http://localhost:1313/tags/tls/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Vmware</title>
+      <link>http://localhost:1313/tags/vmware/</link>
+      <pubDate>Wed, 15 Apr 2026 11:24:00 +0800</pubDate>
+      <guid>http://localhost:1313/tags/vmware/</guid>
       <description></description>
     </item>
     <item>
       <title>K8s</title>
       <link>http://localhost:1313/tags/k8s/</link>
-      <pubDate>Mon, 13 Apr 2026 09:22:00 +0800</pubDate>
+      <pubDate>Tue, 14 Apr 2026 00:00:00 +0000</pubDate>
       <guid>http://localhost:1313/tags/k8s/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>实验记录</title>
+      <link>http://localhost:1313/tags/%E5%AE%9E%E9%AA%8C%E8%AE%B0%E5%BD%95/</link>
+      <pubDate>Tue, 14 Apr 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/%E5%AE%9E%E9%AA%8C%E8%AE%B0%E5%BD%95/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Cka</title>
+      <link>http://localhost:1313/tags/cka/</link>
+      <pubDate>Mon, 13 Apr 2026 09:22:00 +0800</pubDate>
+      <guid>http://localhost:1313/tags/cka/</guid>
       <description></description>
     </item>
     <item>

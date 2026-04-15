@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>实验记录 on K8s 学习手记</title>
+    <link>http://localhost:1313/tags/%E5%AE%9E%E9%AA%8C%E8%AE%B0%E5%BD%95/</link>
+    <description>Recent content in 实验记录 on K8s 学习手记</description>
+    <generator>Hugo</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Tue, 14 Apr 2026 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/%E5%AE%9E%E9%AA%8C%E8%AE%B0%E5%BD%95/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>K8s rollout 回滚机制的一个反直觉现象</title>
+      <link>http://localhost:1313/k8s-rollout-review/</link>
+      <pubDate>Tue, 14 Apr 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/k8s-rollout-review/</guid>
+      <description>&lt;h2 id=&#34;原本打算记录deployment-rollout-undo回滚机制&#34;&gt;原本打算记录Deployment rollout undo回滚机制&lt;/h2&gt;
+&lt;h2 id=&#34;环境信息可复现&#34;&gt;环境信息（可复现）&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;K8s 版本&lt;/strong&gt;: v1.35.3 (kubectl client v1.35.3)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;集群规模&lt;/strong&gt;: 一主两从测试环境&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;关键配置&lt;/strong&gt;:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;revisionHistoryLimit&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt;      &lt;span style=&#34;color:#75715e&#34;&gt;# 设置最多留存历史修改版本方便测试GC，回滚时有选择, 如果为0则不记录历史版本&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;strategy&lt;/span&gt;:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#f92672&#34;&gt;rollingUpdate&lt;/span&gt;:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;maxSurge&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;25&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;%           &lt;/span&gt; &lt;span style=&#34;color:#75715e&#34;&gt;# 更新时允许超出的比例&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;maxUnavailable&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;25&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;%     &lt;/span&gt; &lt;span style=&#34;color:#75715e&#34;&gt;# 最大不可用比例&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;terminationGracePeriodSeconds&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;30&lt;/span&gt;  &lt;span style=&#34;color:#75715e&#34;&gt;# 优雅停机， pod删除时最大宽限时间&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;意外发现&#34;&gt;意外发现&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;kubectl rollout undo --to-revision=1&lt;/code&gt; 执行后：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;预期：回到 revision 1， 但revision 1 还在历史记录里&lt;/li&gt;
+&lt;li&gt;实际：&lt;strong&gt;revision 1 消失了&lt;/strong&gt;，生成了新的 revision 3（3 的配置和 1 一样）
+revision记录
+&lt;img alt=&#34;undo1&#34; loading=&#34;lazy&#34; src=&#34;http://localhost:1313/k8s-rollout-review/undo_1.png&#34;&gt;
+回滚后
+&lt;img alt=&#34;undo2&#34; loading=&#34;lazy&#34; src=&#34;http://localhost:1313/k8s-rollout-review/undo_2.png&#34;&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;复现步骤&#34;&gt;复现步骤&lt;/h2&gt;
+&lt;h4 id=&#34;1-制造多个revision记录&#34;&gt;1. 制造多个revision记录&lt;/h4&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; i in &lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;1..5&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;; &lt;span style=&#34;color:#66d9ef&#34;&gt;do&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  kubectl set image deployment/nginx-deployment my-nginx&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;nginx:1.$i --record
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;done&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;img alt=&#34;review_1&#34; loading=&#34;lazy&#34; src=&#34;http://localhost:1313/k8s-rollout-review/review_1.png&#34;&gt;
+查看revision记录
+&lt;img alt=&#34;review_2&#34; loading=&#34;lazy&#34; src=&#34;http://localhost:1313/k8s-rollout-review/review_2.png&#34;&gt;&lt;/p&gt;
+&lt;h4 id=&#34;2-回滚验证&#34;&gt;2. 回滚验证&lt;/h4&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;kubectl rollout undo --to-revision&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;4&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;kubectl rollout undo --to-revision&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;9&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;img alt=&#34;undo_3&#34; loading=&#34;lazy&#34; src=&#34;http://localhost:1313/k8s-rollout-review/undo_3.png&#34;&gt;&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>
