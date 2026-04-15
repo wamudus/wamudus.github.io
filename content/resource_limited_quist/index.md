@@ -81,7 +81,7 @@ Pod 不再 Pending，资源层问题彻底解决
   -  21 分钟 × 129 次失败：证书问题导致持续无法就绪，Pod 被隔离在 Service 外
 直到手动批准 CSR 后，探针返回 200，Pod 状态才变为 Ready。
 ### 第三层：kubeadm 的默认证书陷阱
-beadm 默认生成的 kubelet 证书**只包含 hostname，不含 Node IP**。
+kubeadm 默认生成的 kubelet 证书**只包含 hostname，不含 Node IP**。
 
 metrics-server 默认使用 **NodeIP**（如 172.30.30.138）连接 kubelet，证书验证失败：
 
