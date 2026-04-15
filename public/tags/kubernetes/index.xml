@@ -10,9 +10,9 @@
     <atom:link href="http://localhost:1313/tags/kubernetes/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>从&#39;资源恐慌&#39;到生产级 TLS：一次跨层 K8S 排查实录</title>
-      <link>http://localhost:1313/resource_limited_quist/</link>
+      <link>http://localhost:1313/posts/resource_limited_quist/</link>
       <pubDate>Wed, 15 Apr 2026 11:24:00 +0800</pubDate>
-      <guid>http://localhost:1313/resource_limited_quist/</guid>
+      <guid>http://localhost:1313/posts/resource_limited_quist/</guid>
       <description>记录从 K8S 调度失败穿透到 VMware 虚拟化层与证书基础设施的完整排查链，涉及 NUMA 拓扑陷阱与 kubelet TLS bootstrap 机制。</description>
     </item>
   </channel>

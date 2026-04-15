@@ -227,7 +227,7 @@ Pod 不再 Pending，资源层问题彻底解决</p>
 直到手动批准 CSR 后，探针返回 200，Pod 状态才变为 Ready。</li>
 </ul>
 <h3 id="第三层kubeadm-的默认证书陷阱">第三层：kubeadm 的默认证书陷阱<a hidden class="anchor" aria-hidden="true" href="#第三层kubeadm-的默认证书陷阱">#</a></h3>
-<p>beadm 默认生成的 kubelet 证书<strong>只包含 hostname，不含 Node IP</strong>。</p>
+<p>kubeadm 默认生成的 kubelet 证书<strong>只包含 hostname，不含 Node IP</strong>。</p>
 <p>metrics-server 默认使用 <strong>NodeIP</strong>（如 172.30.30.138）连接 kubelet，证书验证失败：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>x509: cannot validate certificate for 172.30.30.138 
 </span></span><span style="display:flex;"><span>because it doesn&#39;t contain any IP SANs

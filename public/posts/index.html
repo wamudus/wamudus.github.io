@@ -133,6 +133,35 @@
 
 <article class="post-entry"> 
   <header class="entry-header">
+    <h2 class="entry-hint-parent">从&#39;资源恐慌&#39;到生产级 TLS：一次跨层 K8S 排查实录
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>现象: 一个看似简单的 Pending 早上例行检查测试环境，发现新部署的 nginx Pod 卡在 Pending： 初步判断：加了resource字段配额后CPU资源不足.
+第一层：我有多少粮？ 排查前先算账。物理机是 E5-2697 v4： 关键认知：
+18 物理核心 × 2 超线程 = 36 逻辑线程（Threads） VMware Workstation 单个 VM 最多支持 32 vCPU（软件限制） 建议分配给所有 VM 的总和：28-32 vCPU（留 4-8 个给 Windows 宿主保活） 所以理论上，这台机器可以虚拟出：
+7 个 4C VM（28 vCPU，余量充足） 或 4 个 8C VM（32 vCPU，摸上限） 或 1 个 32C 巨兽 VM（Workstation 上限） 但我当时配的是 2C4G——相当于拿着 36 个线程，只给 K8S每个节点用了 2 个，剩下的 30 个在 VMware 里干瞪眼。这是第一层&#34;认知饥荒&#34;。
+...</p>
+  </div>
+  <footer class="entry-footer"><span title='2026-04-15 11:24:00 +0800 CST'>April 15, 2026</span>&nbsp;·&nbsp;<span>2 min</span></footer>
+  <a class="entry-link" aria-label="post link to 从&#39;资源恐慌&#39;到生产级 TLS：一次跨层 K8S 排查实录" href="http://localhost:1313/posts/resource_limited_quist/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">K8s rollout 回滚机制的一个反直觉现象
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>原本打算记录Deployment rollout undo回滚机制 环境信息（可复现） K8s 版本: v1.35.3 (kubectl client v1.35.3) 集群规模: 一主两从测试环境 关键配置: revisionHistoryLimit: 10 # 设置最多留存历史修改版本方便测试GC，回滚时有选择, 如果为0则不记录历史版本 strategy: rollingUpdate: maxSurge: 25% # 更新时允许超出的比例 maxUnavailable: 25% # 最大不可用比例 terminationGracePeriodSeconds: 30 # 优雅停机， pod删除时最大宽限时间 意外发现 kubectl rollout undo --to-revision=1 执行后：
+预期：回到 revision 1， 但revision 1 还在历史记录里 实际：revision 1 消失了，生成了新的 revision 3（3 的配置和 1 一样） revision记录 回滚后 复现步骤 1. 制造多个revision记录 for i in {1..5}; do kubectl set image deployment/nginx-deployment my-nginx=nginx:1.$i --record done 查看revision记录 2. 回滚验证 kubectl rollout undo --to-revision=4 kubectl rollout undo --to-revision=9 ...</p>
+  </div>
+  <footer class="entry-footer"><span title='2026-04-14 00:00:00 +0000 UTC'>April 14, 2026</span>&nbsp;·&nbsp;<span>1 min</span></footer>
+  <a class="entry-link" aria-label="post link to K8s rollout 回滚机制的一个反直觉现象" href="http://localhost:1313/posts/k8s-rollout-review/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
     <h2 class="entry-hint-parent">K8s 折腾记录：Startup Probe 权限排障与 YAML 字段陷阱
     </h2>
   </header>
@@ -142,7 +171,7 @@ kubectl get pods -o wide -w 日志输出部分 NAME READY STATUS RESTARTS AGE IP
 ...</p>
   </div>
   <footer class="entry-footer"><span title='2026-04-13 09:22:00 +0800 CST'>April 13, 2026</span>&nbsp;·&nbsp;<span>3 min</span></footer>
-  <a class="entry-link" aria-label="post link to K8s 折腾记录：Startup Probe 权限排障与 YAML 字段陷阱" href="http://localhost:1313/posts/probe-debug/"></a>
+  <a class="entry-link" aria-label="post link to K8s 折腾记录：Startup Probe 权限排障与 YAML 字段陷阱" href="http://localhost:1313/posts/permission/probe-debug/"></a>
 </article>
     </main>
     

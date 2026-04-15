@@ -137,10 +137,14 @@
     </h2>
   </header>
   <div class="entry-content">
-    <p>案发现场：Insufficient CPU？ 早上例行检查测试环境，发现新部署的 nginx Pod 卡在 Pending： </p>
+    <p>现象: 一个看似简单的 Pending 早上例行检查测试环境，发现新部署的 nginx Pod 卡在 Pending： 初步判断：加了resource字段配额后CPU资源不足.
+第一层：我有多少粮？ 排查前先算账。物理机是 E5-2697 v4： 关键认知：
+18 物理核心 × 2 超线程 = 36 逻辑线程（Threads） VMware Workstation 单个 VM 最多支持 32 vCPU（软件限制） 建议分配给所有 VM 的总和：28-32 vCPU（留 4-8 个给 Windows 宿主保活） 所以理论上，这台机器可以虚拟出：
+7 个 4C VM（28 vCPU，余量充足） 或 4 个 8C VM（32 vCPU，摸上限） 或 1 个 32C 巨兽 VM（Workstation 上限） 但我当时配的是 2C4G——相当于拿着 36 个线程，只给 K8S每个节点用了 2 个，剩下的 30 个在 VMware 里干瞪眼。这是第一层&#34;认知饥荒&#34;。
+...</p>
   </div>
-  <footer class="entry-footer"><span title='2026-04-15 11:24:00 +0800 CST'>April 15, 2026</span>&nbsp;·&nbsp;<span>1 min</span></footer>
-  <a class="entry-link" aria-label="post link to 从&#39;资源恐慌&#39;到生产级 TLS：一次跨层 K8S 排查实录" href="http://localhost:1313/resource_limited_quist/"></a>
+  <footer class="entry-footer"><span title='2026-04-15 11:24:00 +0800 CST'>April 15, 2026</span>&nbsp;·&nbsp;<span>2 min</span></footer>
+  <a class="entry-link" aria-label="post link to 从&#39;资源恐慌&#39;到生产级 TLS：一次跨层 K8S 排查实录" href="http://localhost:1313/posts/resource_limited_quist/"></a>
 </article>
     </main>
     

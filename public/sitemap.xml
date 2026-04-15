@@ -14,6 +14,9 @@
     <loc>http://localhost:1313/tags/metrics-server/</loc>
     <lastmod>2026-04-15T11:24:00+08:00</lastmod>
   </url><url>
+    <loc>http://localhost:1313/posts/</loc>
+    <lastmod>2026-04-15T11:24:00+08:00</lastmod>
+  </url><url>
     <loc>http://localhost:1313/tags/</loc>
     <lastmod>2026-04-15T11:24:00+08:00</lastmod>
   </url><url>
@@ -23,7 +26,7 @@
     <loc>http://localhost:1313/tags/vmware/</loc>
     <lastmod>2026-04-15T11:24:00+08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/resource_limited_quist/</loc>
+    <loc>http://localhost:1313/posts/resource_limited_quist/</loc>
     <lastmod>2026-04-15T11:24:00+08:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/categories/</loc>
@@ -35,7 +38,7 @@
     <loc>http://localhost:1313/tags/k8s/</loc>
     <lastmod>2026-04-14T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/k8s-rollout-review/</loc>
+    <loc>http://localhost:1313/posts/k8s-rollout-review/</loc>
     <lastmod>2026-04-14T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/categories/%E5%AE%9E%E9%AA%8C%E8%AE%B0%E5%BD%95/</loc>
@@ -47,13 +50,10 @@
     <loc>http://localhost:1313/tags/cka/</loc>
     <lastmod>2026-04-13T09:22:00+08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/posts/probe-debug/</loc>
+    <loc>http://localhost:1313/posts/permission/probe-debug/</loc>
     <lastmod>2026-04-13T09:22:00+08:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/categories/kubernetes/</loc>
-    <lastmod>2026-04-13T09:22:00+08:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/posts/</loc>
     <lastmod>2026-04-13T09:22:00+08:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/tags/troubleshooting/</loc>

@@ -141,7 +141,7 @@
 预期：回到 revision 1， 但revision 1 还在历史记录里 实际：revision 1 消失了，生成了新的 revision 3（3 的配置和 1 一样） revision记录 回滚后 复现步骤 1. 制造多个revision记录 for i in {1..5}; do kubectl set image deployment/nginx-deployment my-nginx=nginx:1.$i --record done 查看revision记录 2. 回滚验证 kubectl rollout undo --to-revision=4 kubectl rollout undo --to-revision=9 ...</p>
   </div>
   <footer class="entry-footer"><span title='2026-04-14 00:00:00 +0000 UTC'>April 14, 2026</span>&nbsp;·&nbsp;<span>1 min</span></footer>
-  <a class="entry-link" aria-label="post link to K8s rollout 回滚机制的一个反直觉现象" href="http://localhost:1313/k8s-rollout-review/"></a>
+  <a class="entry-link" aria-label="post link to K8s rollout 回滚机制的一个反直觉现象" href="http://localhost:1313/posts/k8s-rollout-review/"></a>
 </article>
 
 <article class="post-entry tag-entry"> 
@@ -155,7 +155,7 @@ kubectl get pods -o wide -w 日志输出部分 NAME READY STATUS RESTARTS AGE IP
 ...</p>
   </div>
   <footer class="entry-footer"><span title='2026-04-13 09:22:00 +0800 CST'>April 13, 2026</span>&nbsp;·&nbsp;<span>3 min</span></footer>
-  <a class="entry-link" aria-label="post link to K8s 折腾记录：Startup Probe 权限排障与 YAML 字段陷阱" href="http://localhost:1313/posts/probe-debug/"></a>
+  <a class="entry-link" aria-label="post link to K8s 折腾记录：Startup Probe 权限排障与 YAML 字段陷阱" href="http://localhost:1313/posts/permission/probe-debug/"></a>
 </article>
     </main>
     

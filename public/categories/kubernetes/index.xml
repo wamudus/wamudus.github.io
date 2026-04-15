@@ -10,9 +10,9 @@
     <atom:link href="http://localhost:1313/categories/kubernetes/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>K8s 折腾记录：Startup Probe 权限排障与 YAML 字段陷阱</title>
-      <link>http://localhost:1313/posts/probe-debug/</link>
+      <link>http://localhost:1313/posts/permission/probe-debug/</link>
       <pubDate>Mon, 13 Apr 2026 09:22:00 +0800</pubDate>
-      <guid>http://localhost:1313/posts/probe-debug/</guid>
+      <guid>http://localhost:1313/posts/permission/probe-debug/</guid>
       <description>记录 K8s Startup Probe 权限排障过程，以及 restartPolicy 字段层级陷阱的发现</description>
     </item>
   </channel>
