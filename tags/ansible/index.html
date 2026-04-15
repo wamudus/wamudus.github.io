@@ -4,7 +4,7 @@
 第一层：我有多少粮？ 排查前先算账。物理机是 E5-2697 v4： 关键认知：
 18 物理核心 × 2 超线程 = 36 逻辑线程（Threads） VMware Workstation 单个 VM 最多支持 32 vCPU（软件限制） 建议分配给所有 VM 的总和：28-32 vCPU（留 4-8 个给 Windows 宿主保活） 所以理论上，这台机器可以虚拟出：
 7 个 4C VM（28 vCPU，余量充足） 或 4 个 8C VM（32 vCPU，摸上限） 或 1 个 32C 巨兽 VM（Workstation 上限） 但我当时配的是 2C4G——相当于拿着 36 个线程，只给 K8S每个节点用了 2 个，剩下的 30 个在 VMware 里干瞪眼。这是第一层"认知饥荒"。
-...</p></div><footer class=entry-footer><span title='2026-04-15 11:24:00 +0800 +0800'>April 15, 2026</span>&nbsp;·&nbsp;<span>2 min</span></footer><a class=entry-link aria-label="post link to 从'资源恐慌'到生产级 TLS：一次跨层 K8S 排查实录" href=https://wamudus.github.io/resource_limited_quist/></a></article></main><footer class=footer><span>&copy; 2026 <a href=https://wamudus.github.io/>K8s 学习手记</a></span> ·
+...</p></div><footer class=entry-footer><span title='2026-04-15 11:24:00 +0800 +0800'>April 15, 2026</span>&nbsp;·&nbsp;<span>2 min</span></footer><a class=entry-link aria-label="post link to 从'资源恐慌'到生产级 TLS：一次跨层 K8S 排查实录" href=https://wamudus.github.io/posts/resource_limited_quist/></a></article></main><footer class=footer><span>&copy; 2026 <a href=https://wamudus.github.io/>K8s 学习手记</a></span> ·
 <span>Powered by
 <a href=https://gohugo.io/ rel="noopener noreferrer" target=_blank>Hugo</a> &
 <a href=https://github.com/adityatelange/hugo-PaperMod/ rel=noopener target=_blank>PaperMod</a></span></footer><a href=#top id=top-link class="top-link hidden" aria-label="go to top" title="Go to Top (Alt + G)" accesskey=g><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevrons-up"><polyline points="17 11 12 6 7 11"/><polyline points="17 18 12 13 7 18"/></svg>

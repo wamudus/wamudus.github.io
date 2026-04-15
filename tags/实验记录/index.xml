@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>实验记录 on K8s 学习手记</title><link>https://wamudus.github.io/tags/%E5%AE%9E%E9%AA%8C%E8%AE%B0%E5%BD%95/</link><description>Recent content in 实验记录 on K8s 学习手记</description><generator>Hugo</generator><language>zh-CN</language><lastBuildDate>Tue, 14 Apr 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://wamudus.github.io/tags/%E5%AE%9E%E9%AA%8C%E8%AE%B0%E5%BD%95/index.xml" rel="self" type="application/rss+xml"/><item><title>K8s rollout 回滚机制的一个反直觉现象</title><link>https://wamudus.github.io/k8s-rollout-review/</link><pubDate>Tue, 14 Apr 2026 00:00:00 +0000</pubDate><guid>https://wamudus.github.io/k8s-rollout-review/</guid><description>&lt;h2 id="原本打算记录deployment-rollout-undo回滚机制"&gt;原本打算记录Deployment rollout undo回滚机制&lt;/h2&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>实验记录 on K8s 学习手记</title><link>https://wamudus.github.io/tags/%E5%AE%9E%E9%AA%8C%E8%AE%B0%E5%BD%95/</link><description>Recent content in 实验记录 on K8s 学习手记</description><generator>Hugo</generator><language>zh-CN</language><lastBuildDate>Tue, 14 Apr 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://wamudus.github.io/tags/%E5%AE%9E%E9%AA%8C%E8%AE%B0%E5%BD%95/index.xml" rel="self" type="application/rss+xml"/><item><title>K8s rollout 回滚机制的一个反直觉现象</title><link>https://wamudus.github.io/posts/k8s-rollout-review/</link><pubDate>Tue, 14 Apr 2026 00:00:00 +0000</pubDate><guid>https://wamudus.github.io/posts/k8s-rollout-review/</guid><description>&lt;h2 id="原本打算记录deployment-rollout-undo回滚机制"&gt;原本打算记录Deployment rollout undo回滚机制&lt;/h2&gt;
 &lt;h2 id="环境信息可复现"&gt;环境信息（可复现）&lt;/h2&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;strong&gt;K8s 版本&lt;/strong&gt;: v1.35.3 (kubectl client v1.35.3)&lt;/li&gt;
@@ -17,19 +17,19 @@
 &lt;li&gt;预期：回到 revision 1， 但revision 1 还在历史记录里&lt;/li&gt;
 &lt;li&gt;实际：&lt;strong&gt;revision 1 消失了&lt;/strong&gt;，生成了新的 revision 3（3 的配置和 1 一样）
 revision记录
-&lt;img alt="undo1" loading="lazy" src="https://wamudus.github.io/k8s-rollout-review/undo_1.png"&gt;
+&lt;img alt="undo1" loading="lazy" src="https://wamudus.github.io/posts/k8s-rollout-review/undo_1.png"&gt;
 回滚后
-&lt;img alt="undo2" loading="lazy" src="https://wamudus.github.io/k8s-rollout-review/undo_2.png"&gt;&lt;/li&gt;
+&lt;img alt="undo2" loading="lazy" src="https://wamudus.github.io/posts/k8s-rollout-review/undo_2.png"&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2 id="复现步骤"&gt;复现步骤&lt;/h2&gt;
 &lt;h4 id="1-制造多个revision记录"&gt;1. 制造多个revision记录&lt;/h4&gt;
 &lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#66d9ef"&gt;for&lt;/span&gt; i in &lt;span style="color:#f92672"&gt;{&lt;/span&gt;1..5&lt;span style="color:#f92672"&gt;}&lt;/span&gt;; &lt;span style="color:#66d9ef"&gt;do&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; kubectl set image deployment/nginx-deployment my-nginx&lt;span style="color:#f92672"&gt;=&lt;/span&gt;nginx:1.$i --record
 &lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#66d9ef"&gt;done&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;img alt="review_1" loading="lazy" src="https://wamudus.github.io/k8s-rollout-review/review_1.png"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;img alt="review_1" loading="lazy" src="https://wamudus.github.io/posts/k8s-rollout-review/review_1.png"&gt;
 查看revision记录
-&lt;img alt="review_2" loading="lazy" src="https://wamudus.github.io/k8s-rollout-review/review_2.png"&gt;&lt;/p&gt;
+&lt;img alt="review_2" loading="lazy" src="https://wamudus.github.io/posts/k8s-rollout-review/review_2.png"&gt;&lt;/p&gt;
 &lt;h4 id="2-回滚验证"&gt;2. 回滚验证&lt;/h4&gt;
 &lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;kubectl rollout undo --to-revision&lt;span style="color:#f92672"&gt;=&lt;/span&gt;&lt;span style="color:#ae81ff"&gt;4&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;kubectl rollout undo --to-revision&lt;span style="color:#f92672"&gt;=&lt;/span&gt;&lt;span style="color:#ae81ff"&gt;9&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;img alt="undo_3" loading="lazy" src="https://wamudus.github.io/k8s-rollout-review/undo_3.png"&gt;&lt;/p&gt;</description></item></channel></rss>
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;img alt="undo_3" loading="lazy" src="https://wamudus.github.io/posts/k8s-rollout-review/undo_3.png"&gt;&lt;/p&gt;</description></item></channel></rss>
