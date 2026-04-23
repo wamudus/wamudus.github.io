@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>从零搭建 Podman 可观测平台：Prometheus &#43; Loki &#43; Grafana 实践 on K8s 学习手记</title>
+    <link>http://localhost:1313/posts/observability-lab/</link>
+    <description>Recent content in 从零搭建 Podman 可观测平台：Prometheus &#43; Loki &#43; Grafana 实践 on K8s 学习手记</description>
+    <generator>Hugo</generator>
+    <language>zh-CN</language>
+    <lastBuildDate></lastBuildDate>
+    <atom:link href="http://localhost:1313/posts/observability-lab/index.xml" rel="self" type="application/rss+xml" />
+  </channel>
+</rss>
