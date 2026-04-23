@@ -6,8 +6,15 @@
     <description>Recent content on K8s 学习手记</description>
     <generator>Hugo</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Wed, 15 Apr 2026 11:24:00 +0800</lastBuildDate>
+    <lastBuildDate>Thu, 23 Apr 2026 09:20:00 +0800</lastBuildDate>
     <atom:link href="http://localhost:1313/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>从零搭建 Podman 可观测平台：Prometheus &#43; Loki &#43; Grafana 实践</title>
+      <link>http://localhost:1313/posts/observability-lab/</link>
+      <pubDate>Thu, 23 Apr 2026 09:20:00 +0800</pubDate>
+      <guid>http://localhost:1313/posts/observability-lab/</guid>
+      <description>在裸机 Podman 环境下从零搭建完整的可观测链路，包括指标监控、日志收集、可视化仪表盘和钉钉告警。</description>
+    </item>
     <item>
       <title>从&#39;资源恐慌&#39;到生产级 TLS：一次跨层 K8S 排查实录</title>
       <link>http://localhost:1313/posts/resource_limited_quist/</link>

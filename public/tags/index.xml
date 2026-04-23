@@ -6,8 +6,50 @@
     <description>Recent content in Tags on K8s 学习手记</description>
     <generator>Hugo</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Wed, 15 Apr 2026 11:24:00 +0800</lastBuildDate>
+    <lastBuildDate>Thu, 23 Apr 2026 09:20:00 +0800</lastBuildDate>
     <atom:link href="http://localhost:1313/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Grafana</title>
+      <link>http://localhost:1313/tags/grafana/</link>
+      <pubDate>Thu, 23 Apr 2026 09:20:00 +0800</pubDate>
+      <guid>http://localhost:1313/tags/grafana/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Homelab</title>
+      <link>http://localhost:1313/tags/homelab/</link>
+      <pubDate>Thu, 23 Apr 2026 09:20:00 +0800</pubDate>
+      <guid>http://localhost:1313/tags/homelab/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Loki</title>
+      <link>http://localhost:1313/tags/loki/</link>
+      <pubDate>Thu, 23 Apr 2026 09:20:00 +0800</pubDate>
+      <guid>http://localhost:1313/tags/loki/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Observability</title>
+      <link>http://localhost:1313/tags/observability/</link>
+      <pubDate>Thu, 23 Apr 2026 09:20:00 +0800</pubDate>
+      <guid>http://localhost:1313/tags/observability/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Podman</title>
+      <link>http://localhost:1313/tags/podman/</link>
+      <pubDate>Thu, 23 Apr 2026 09:20:00 +0800</pubDate>
+      <guid>http://localhost:1313/tags/podman/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Prometheus</title>
+      <link>http://localhost:1313/tags/prometheus/</link>
+      <pubDate>Thu, 23 Apr 2026 09:20:00 +0800</pubDate>
+      <guid>http://localhost:1313/tags/prometheus/</guid>
+      <description></description>
+    </item>
     <item>
       <title>Ansible</title>
       <link>http://localhost:1313/tags/ansible/</link>
