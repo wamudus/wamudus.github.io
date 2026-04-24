@@ -530,7 +530,7 @@ Promtail 挂载 `/var/log` 后，messages 文件里包含了 Loki、Promtail、G
 **解决**：LogQL 查询时排除自身进程：
 
 ```
-{job="varlogs"} |= "(?i)error" != "loki[" != "grafana[" != "promtail["
+{job="varlogs"} |~ "(?i)error" != "query=" != "caller=engine.go" != "caller=metrics.go" != "loki[" != "grafana[" != "promtail["
 ```
 
 ### 坑 3：钉钉 message 字段类型错误
