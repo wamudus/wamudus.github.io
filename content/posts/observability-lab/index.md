@@ -178,11 +178,6 @@ services:
       - loki-data:/loki
     command: 
       - "--config.file=/etc/loki/local-config.yaml"
-    healthcheck:
-      test: ["CMD-SHELL", "wget --spider -q http://localhost:3100/ready || exit 1"]
-      interval: 15s
-      timeout: 5s
-      retries: 3
 
   promtail:
     image: docker.io/grafana/promtail:3.4.1
