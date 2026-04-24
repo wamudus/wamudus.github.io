@@ -564,7 +564,7 @@ podman exec -it dingtalk ls /etc/prometheus-webhook-dingtalk/
 
 `depends_on` 只保证启动顺序，不保证服务就绪。Grafana 启动时若 Loki 尚未监听 3100，数据源会被标记为 down。
 
-**解决**：给 Loki 添加 `healthcheck`，让 Grafana 等其 Ready 再启动；或启动后手动 `docker compose restart grafana`。
+**解决**：Loki 官方镜像基于 distroless，无法内置 healthcheck；启动后手动 `docker compose restart grafana` 即可刷新数据源状态。
 
 ## 快速启动
 
