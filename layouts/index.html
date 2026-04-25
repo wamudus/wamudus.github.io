@@ -298,12 +298,7 @@
     <div class="section-title">最近文章</div>
     {{ range .Site.RegularPages.ByDate.Reverse | first 6 }}
     <article class="post-item">
-      <div>
-        <a href="{{ .RelPermalink }}" class="post-title">{{ .Title }}</a>
-        {{ if .Summary }}
-        <p class="post-summary">{{ .Summary | truncate 70 }}</p>
-        {{ end }}
-      </div>
+      <a href="{{ .RelPermalink }}" class="post-title">{{ .Title }}</a>
       <time class="post-date">{{ .Date.Format "2006-01-02" }}</time>
     </article>
     {{ end }}
