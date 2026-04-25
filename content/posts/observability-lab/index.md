@@ -566,31 +566,22 @@ podman exec -it dingtalk ls /etc/prometheus-webhook-dingtalk/
 
 **解决**：Loki 官方镜像基于 distroless，无法内置 healthcheck；启动后手动 `docker compose restart grafana` 即可刷新数据源状态。
 
-## 快速启动
+## 链路验证
 
-```bash
-# 克隆仓库
-git clone https://github.com/wamudus/homelab-observability.git
-cd homelab-observability/docker-compose
+部署完成后，按这个顺序验证三条链路是否全部打通：
 
-# 修改 dingtalk.yml 中的 token
-vim dingtalk.yml
+**1. Metrics 链路**
+- Prometheus Targets 页面 (`:9090/targets`) 确认 `node-exporter:9100` 状态为 UP
+- Grafana Explore 查询 `node_cpu_seconds_total` 能返回时序数据
 
-# 启动全栈
-docker compose up -d
+**2. Logs 链路**
+- Promtail 日志无报错，`/var/log/messages` 被正常推送
+- Grafana Explore 选择 Loki 数据源，查询 `{job="varlogs"}` 能看到日志流
 
-# 查看状态
-docker compose ps
-```
-
-访问地址：
-
-| 服务 | 地址 | 默认账号 |
-|------|------|---------|
-| Grafana | http://localhost:3000 | admin / admin |
-| Prometheus | http://localhost:9090 | - |
-| Alertmanager | http://localhost:9093 | - |
-| Loki | http://localhost:3100 | - |
+**3. Alerting 链路**
+- 手动触发告警：临时调低 `alert_rules.yml` 中的阈值，让 CPU 告警 firing
+- Alertmanager (`:9093`) 中能看到活跃告警
+- 钉钉群收到测试告警消息，确认模板渲染和关键词过滤都正常
 
 ## 后续计划
 
