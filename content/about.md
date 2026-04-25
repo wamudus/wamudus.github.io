@@ -5,6 +5,16 @@ layout: "single"
 
 这里是我在折腾 homelab 和云原生基础设施过程中的踩坑记录。
 
+## 资质
+
+**RHCA**（红帽认证架构师，RHEL 8 基础设施方向）
+
+- EX442 — Linux 性能调优
+- EX436 — 高可用集群（Pacemaker/Corosync）
+- EX374 — Ansible Automation Platform
+- EX260 — Ceph 存储管理
+- EX358 — 服务治理（RHEL 8 网络与安全）
+
 ## 现在在搞什么
 
 - **可观测平台**：基于 Prometheus + Loki + Grafana 的监控告警链路，已接入钉钉通知
