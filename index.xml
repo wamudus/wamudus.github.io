@@ -34,13 +34,16 @@
 &lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;kubectl rollout undo --to-revision&lt;span style="color:#f92672"&gt;=&lt;/span&gt;&lt;span style="color:#ae81ff"&gt;9&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;img alt="undo_3" loading="lazy" src="https://wamudus.github.io/posts/k8s-rollout-review/undo_3.png"&gt;&lt;/p&gt;</description></item><item><title>K8s 折腾记录：Startup Probe 权限排障与 YAML 字段陷阱</title><link>https://wamudus.github.io/posts/permission/probe-debug/</link><pubDate>Mon, 13 Apr 2026 09:22:00 +0800</pubDate><guid>https://wamudus.github.io/posts/permission/probe-debug/</guid><description>记录 K8s Startup Probe 权限排障过程，以及 restartPolicy 字段层级陷阱的发现</description></item><item><title>关于</title><link>https://wamudus.github.io/about/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://wamudus.github.io/about/</guid><description>&lt;p&gt;这里是我在折腾 homelab 和云原生基础设施过程中的踩坑记录。&lt;/p&gt;
 &lt;h2 id="资质"&gt;资质&lt;/h2&gt;
-&lt;p&gt;&lt;strong&gt;RHCA&lt;/strong&gt;（红帽认证架构师，RHEL 8 基础设施方向）&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;RHCA&lt;/strong&gt;（红帽认证架构师，基础设施方向）
+&lt;a href="https://www.redhat.com/rhtapps/services/verify?certId=240-064-477"&gt;验证链接&lt;/a&gt; · 证书编号 &lt;code&gt;240-064-477&lt;/code&gt;&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;EX442 — Linux 性能调优&lt;/li&gt;
-&lt;li&gt;EX436 — 高可用集群（Pacemaker/Corosync）&lt;/li&gt;
+&lt;li&gt;EX436 — 高可用集群（Pacemaker/Corosync/GFS2）&lt;/li&gt;
 &lt;li&gt;EX374 — Ansible Automation Platform&lt;/li&gt;
-&lt;li&gt;EX260 — Ceph 存储管理&lt;/li&gt;
-&lt;li&gt;EX358 — 服务治理（RHEL 8 网络与安全）&lt;/li&gt;
+&lt;li&gt;EX260 — Ceph 云存储&lt;/li&gt;
+&lt;li&gt;EX358 — 服务治理与自动化&lt;/li&gt;
+&lt;li&gt;EX294 — RHCE（Red Hat Certified Engineer）&lt;/li&gt;
+&lt;li&gt;EX200 — RHCSA（Red Hat Certified System Administrator）&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2 id="现在在搞什么"&gt;现在在搞什么&lt;/h2&gt;
 &lt;ul&gt;
