@@ -15,8 +15,6 @@ layout: "single"
 - EX374 — Ansible Automation Platform
 - EX260 — Ceph 云存储
 - EX358 — 服务治理与自动化
-- EX294 — RHCE（Red Hat Certified Engineer）
-- EX200 — RHCSA（Red Hat Certified System Administrator）
 
 ## 现在在搞什么
 
