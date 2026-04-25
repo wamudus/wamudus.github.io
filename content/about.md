@@ -7,13 +7,16 @@ layout: "single"
 
 ## 资质
 
-**RHCA**（红帽认证架构师，RHEL 8 基础设施方向）
+**RHCA**（红帽认证架构师，基础设施方向）
+[验证链接](https://www.redhat.com/rhtapps/services/verify?certId=240-064-477) · 证书编号 `240-064-477`
 
 - EX442 — Linux 性能调优
-- EX436 — 高可用集群（Pacemaker/Corosync）
+- EX436 — 高可用集群（Pacemaker/Corosync/GFS2）
 - EX374 — Ansible Automation Platform
-- EX260 — Ceph 存储管理
-- EX358 — 服务治理（RHEL 8 网络与安全）
+- EX260 — Ceph 云存储
+- EX358 — 服务治理与自动化
+- EX294 — RHCE（Red Hat Certified Engineer）
+- EX200 — RHCSA（Red Hat Certified System Administrator）
 
 ## 现在在搞什么
 
