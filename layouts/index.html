@@ -1,162 +1,313 @@
 {{ define "main" }}
 
 <style>
-  /* 整体容器 */
-  .note-container {
-    max-width: 800px; 
-    margin: 0 auto; 
-    padding: 2rem 1rem;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  }
-  
-  /* 头部区域 */
-  .note-header {
-    text-align: center; 
-    margin-bottom: 3rem;
-    padding-bottom: 2rem;
-    border-bottom: 1px solid #eee;
-  }
-  .note-title {
-    font-size: 2rem; 
-    margin-bottom: 0.5rem;
-    color: #1a1a1a;
-  }
-  .note-desc {
-    color: #666; 
-    font-size: 1rem;
-    margin-bottom: 1rem;
-  }
-  .badge {
-    display: inline-block;
-    padding: 0.25rem 0.75rem;
-    border-radius: 9999px;
-    font-size: 0.875rem;
-    margin: 0 0.25rem;
-  }
-  .badge-green {
-    background: #dcfce7;
-    color: #166534;
-  }
-  .badge-orange {
-    background: #ffedd5;
-    color: #9a3412;
-  }
+.home-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+}
 
-  /* 文章列表 */
-  .section-title {
-    border-bottom: 2px solid #eee; 
-    padding-bottom: 0.5rem; 
-    font-size: 1.25rem; 
-    color: #333;
-    margin-bottom: 1.5rem;
-  }
-  
+/* Hero */
+.hero {
+  text-align: center;
+  padding: 2.5rem 0 2rem;
+}
+
+.avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  user-select: none;
+}
+
+.hero-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+  color: var(--primary, #1a1a1a);
+}
+
+.hero-sub {
+  color: var(--secondary, #666);
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
+}
+
+.badges {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.badge {
+  padding: 0.25rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 500;
+}
+
+.badge-gold {
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fcd34d;
+}
+
+.badge-blue {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.badge-gray {
+  background: #f3f4f6;
+  color: #4b5563;
+}
+
+/* Bio */
+.bio {
+  text-align: center;
+  color: var(--secondary, #666);
+  font-size: 0.92rem;
+  line-height: 1.7;
+  max-width: 520px;
+  margin: 0 auto 2.5rem;
+}
+
+/* Section */
+.section {
+  margin-bottom: 2rem;
+}
+
+.section-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--secondary, #888);
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--border, #eee);
+}
+
+/* Tech */
+.tech-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.tech-tag {
+  padding: 0.3rem 0.7rem;
+  background: var(--code-bg, #f8fafc);
+  border: 1px solid var(--border, #e2e8f0);
+  border-radius: 6px;
+  font-size: 0.82rem;
+  color: var(--secondary, #475569);
+  transition: all 0.15s;
+  cursor: default;
+}
+
+.tech-tag:hover {
+  border-color: #93c5fd;
+  color: #2563eb;
+}
+
+/* Project */
+.project-card {
+  background: var(--code-bg, #fafafa);
+  border: 1px solid var(--border, #eee);
+  border-radius: 10px;
+  padding: 1.1rem 1.25rem;
+  transition: all 0.2s;
+}
+
+.project-card:hover {
+  border-color: #d1d5db;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.project-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.4rem;
+}
+
+.project-icon {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.project-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--primary, #1a1a1a);
+  text-decoration: none;
+}
+
+.project-title:hover {
+  color: #2563eb;
+}
+
+.project-desc {
+  color: var(--secondary, #666);
+  font-size: 0.88rem;
+  line-height: 1.6;
+  margin-bottom: 0.6rem;
+}
+
+.project-meta {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.project-meta span {
+  font-size: 0.72rem;
+  color: #6b7280;
+  background: #f3f4f6;
+  padding: 0.1rem 0.45rem;
+  border-radius: 4px;
+}
+
+/* Posts */
+.post-item {
+  padding: 0.85rem 0;
+  border-bottom: 1px solid var(--border, #f0f0f0);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.post-item:last-child {
+  border-bottom: none;
+}
+
+.post-title {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #2563eb;
+  text-decoration: none;
+  line-height: 1.4;
+}
+
+.post-title:hover {
+  text-decoration: underline;
+}
+
+.post-date {
+  font-size: 0.78rem;
+  color: #9ca3af;
+  white-space: nowrap;
+  flex-shrink: 0;
+  margin-top: 0.15rem;
+}
+
+.post-summary {
+  font-size: 0.82rem;
+  color: #6b7280;
+  margin-top: 0.2rem;
+  line-height: 1.5;
+}
+
+@media (max-width: 640px) {
   .post-item {
-    margin-bottom: 2rem; 
-    padding-bottom: 1.5rem; 
-    border-bottom: 1px solid #f0f0f0;
+    flex-direction: column;
+    gap: 0.15rem;
   }
-  .post-item:last-child {
-    border-bottom: none;
-  }
-  
-  /* 标题行：标题+日期 */
-  .post-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    margin-bottom: 0.5rem;
-    gap: 1rem;
-  }
-  
-  /* 文章标题链接 - 重点样式 */
-  .post-title {
-    font-size: 1.125rem; 
-    font-weight: 600; 
-    color: #2563eb;  /* 蓝色 */
-    text-decoration: none;
-    line-height: 1.4;
-    transition: all 0.2s ease;
-    flex: 1;
-  }
-  .post-title:hover {
-    color: #1d4ed8;  /* 深蓝 */
-    text-decoration: underline;
-  }
-  
-  /* 日期 */
-  .post-date {
-    font-size: 0.875rem; 
-    color: #9ca3af;  /* 浅灰 */
-    white-space: nowrap;
-    font-family: monospace;
-  }
-  
-  /* 摘要 */
-  .post-summary {
-    margin: 0; 
-    color: #4b5563; 
-    font-size: 0.95rem; 
-    line-height: 1.6;
-  }
-  
-  /* 标签 */
-  .post-tags {
-    margin-top: 0.75rem;
-  }
-  .tag {
-    display: inline-block;
-    font-size: 0.75rem;
-    color: #6b7280;
-    background: #f3f4f6;
-    padding: 0.125rem 0.5rem;
-    border-radius: 4px;
-    margin-right: 0.5rem;
-  }
+}
 </style>
 
-<div class="note-container">
+<div class="home-container">
 
-  <!-- 头部简介 -->
-  <div class="note-header">
-    <h1 class="note-title">{{ .Site.Title }}</h1>
-    {{ with .Site.Params.description }}
-    <p class="note-desc">{{ . }}</p>
-    {{ end }}
-    
-    <div>
-      <span class="badge badge-green">RHCA ✓</span>
-      <span class="badge badge-orange">homelab</span>
-      <span class="badge badge-green">云原生</span>
-      <span class="badge badge-orange">可观测性</span>
+  <!-- Hero -->
+  <div class="hero">
+    <div class="avatar">W</div>
+    <h1 class="hero-title">wamudus</h1>
+    <p class="hero-sub">基础设施 / 云原生 / 可观测性</p>
+    <div class="badges">
+      <span class="badge badge-gold">RHCA ✓</span>
+      <span class="badge badge-blue">homelab</span>
+      <span class="badge badge-gray">云原生</span>
     </div>
   </div>
 
-  <!-- 文章列表 -->
-  <h2 class="section-title">最近文章</h2>
+  <!-- Bio -->
+  <p class="bio">
+    折腾 homelab 和云原生基础设施，偶尔写点踩坑记录。<br>
+    有 RHCA（RHEL 8 基础设施方向），正在往 K8s + 可观测性方向深入。
+  </p>
 
-  {{ range .Site.RegularPages.ByDate.Reverse }}
-  <article class="post-item">
-    <div class="post-header">
-      <a href="{{ .RelPermalink }}" class="post-title">
-        {{ .Title }}
-      </a>
+  <!-- Tech Stack -->
+  <div class="section">
+    <div class="section-title">技术栈</div>
+    <div class="tech-tags">
+      <span class="tech-tag">RHEL</span>
+      <span class="tech-tag">Ansible / AAP</span>
+      <span class="tech-tag">Ceph</span>
+      <span class="tech-tag">K8s</span>
+      <span class="tech-tag">Prometheus</span>
+      <span class="tech-tag">Grafana</span>
+      <span class="tech-tag">Loki</span>
+      <span class="tech-tag">Docker / Podman</span>
+      <span class="tech-tag">HA Cluster</span>
+      <span class="tech-tag">Performance Tuning</span>
+    </div>
+  </div>
+
+  <!-- Featured Project -->
+  <div class="section">
+    <div class="section-title">项目</div>
+    <div class="project-card">
+      <div class="project-header">
+        <div class="project-icon">📡</div>
+        <a href="https://github.com/wamudus/homelab-observability" class="project-title" target="_blank" rel="noopener">homelab-observability</a>
+      </div>
+      <p class="project-desc">
+        基于 Docker Compose 的可观测基线，覆盖 Metrics + Logs + Alerting + Visualization，
+        预置 Node Exporter 和 Loki Dashboard，支持钉钉告警推送。
+      </p>
+      <div class="project-meta">
+        <span>Prometheus</span>
+        <span>Grafana</span>
+        <span>Loki</span>
+        <span>Alertmanager</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Posts -->
+  <div class="section">
+    <div class="section-title">最近文章</div>
+    {{ range .Site.RegularPages.ByDate.Reverse | first 6 }}
+    <article class="post-item">
+      <div>
+        <a href="{{ .RelPermalink }}" class="post-title">{{ .Title }}</a>
+        {{ if .Summary }}
+        <p class="post-summary">{{ .Summary | truncate 70 }}</p>
+        {{ end }}
+      </div>
       <time class="post-date">{{ .Date.Format "2006-01-02" }}</time>
-    </div>
-    
-    <p class="post-summary">
-      {{ .Summary | truncate 120 }}
-    </p>
-    
-    {{ if .Params.tags }}
-    <div class="post-tags">
-      {{ range .Params.tags | first 3 }}
-        <span class="tag">#{{ . }}</span>
-      {{ end }}
-    </div>
+    </article>
     {{ end }}
-  </article>
-  {{ end }}
+  </div>
 
 </div>
 
