@@ -1,6 +1,6 @@
 baseURL = 'https://wamudus.github.io/'
 languageCode = 'zh-CN'
-title = 'K8s 学习手记'
+title = '运维随笔'
 theme = 'PaperMod'
 
 [taxonomies]
@@ -12,7 +12,7 @@ theme = 'PaperMod'
   home = ["HTML", "RSS", "JSON"]
 
 [params]
-  description = '备考 CKA，记录学习过程'
+  description = '记录 homelab 基础设施搭建、K8s 排障与可观测性实践'
   # 显示文章目录（TOC）
   ShowToc = true
   # 显示阅读时间
