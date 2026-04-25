@@ -1,35 +1,35 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>Posts on K8s 学习手记</title><link>https://wamudus.github.io/posts/</link><description>Recent content in Posts on K8s 学习手记</description><generator>Hugo</generator><language>zh-CN</language><lastBuildDate>Thu, 23 Apr 2026 09:20:00 +0800</lastBuildDate><atom:link href="https://wamudus.github.io/posts/index.xml" rel="self" type="application/rss+xml"/><item><title>从零搭建 Podman 可观测平台：Prometheus + Loki + Grafana 实践</title><link>https://wamudus.github.io/posts/observability-lab/</link><pubDate>Thu, 23 Apr 2026 09:20:00 +0800</pubDate><guid>https://wamudus.github.io/posts/observability-lab/</guid><description>在裸机 Podman 环境下从零搭建完整的可观测链路，包括指标监控、日志收集、可视化仪表盘和钉钉告警。</description></item><item><title>从'资源恐慌'到生产级 TLS：一次跨层 K8S 排查实录</title><link>https://wamudus.github.io/posts/resource_limited_quist/</link><pubDate>Wed, 15 Apr 2026 11:24:00 +0800</pubDate><guid>https://wamudus.github.io/posts/resource_limited_quist/</guid><description>记录从 K8S 调度失败穿透到 VMware 虚拟化层与证书基础设施的完整排查链，涉及 NUMA 拓扑陷阱与 kubelet TLS bootstrap 机制。</description></item><item><title>K8s rollout 回滚机制的一个反直觉现象</title><link>https://wamudus.github.io/posts/k8s-rollout-review/</link><pubDate>Tue, 14 Apr 2026 00:00:00 +0000</pubDate><guid>https://wamudus.github.io/posts/k8s-rollout-review/</guid><description>&lt;h2 id="原本打算记录deployment-rollout-undo回滚机制"&gt;原本打算记录Deployment rollout undo回滚机制&lt;/h2&gt;
-&lt;h2 id="环境信息可复现"&gt;环境信息（可复现）&lt;/h2&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>Posts on K8s 学习手记</title><link>https://wamudus.github.io/posts/</link><description>Recent content in Posts on K8s 学习手记</description><generator>Hugo</generator><language>zh-CN</language><lastBuildDate>Thu, 23 Apr 2026 09:20:00 +0800</lastBuildDate><atom:link href="https://wamudus.github.io/posts/index.xml" rel="self" type="application/rss+xml"/><item><title>从零搭建 Podman 可观测平台：Prometheus + Loki + Grafana 实践</title><link>https://wamudus.github.io/posts/observability-lab/</link><pubDate>Thu, 23 Apr 2026 09:20:00 +0800</pubDate><guid>https://wamudus.github.io/posts/observability-lab/</guid><description>在裸机 Podman 环境下从零搭建完整的可观测链路，包括指标监控、日志收集、可视化仪表盘和钉钉告警。</description></item><item><title>K8s Pod Pending 排查：资源分配和 TLS 证书两个问题</title><link>https://wamudus.github.io/posts/resource_limited_quist/</link><pubDate>Wed, 15 Apr 2026 11:24:00 +0800</pubDate><guid>https://wamudus.github.io/posts/resource_limited_quist/</guid><description>测试环境部署 nginx Pod 卡在 Pending，排查发现 VMware CPU 分配配错了，metrics-server 又因为 TLS 证书不含 Node IP 起不来。</description></item><item><title>K8s rollout undo 回滚会吃掉历史版本号</title><link>https://wamudus.github.io/posts/k8s-rollout-review/</link><pubDate>Tue, 14 Apr 2026 00:00:00 +0000</pubDate><guid>https://wamudus.github.io/posts/k8s-rollout-review/</guid><description>&lt;p&gt;本来只是想测试下 Deployment 的 rollout undo 机制，结果发现一个反直觉的行为。&lt;/p&gt;
+&lt;h2 id="环境信息"&gt;环境信息&lt;/h2&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;K8s 版本&lt;/strong&gt;: v1.35.3 (kubectl client v1.35.3)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;K8s 版本&lt;/strong&gt;: v1.35.3&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;集群规模&lt;/strong&gt;: 一主两从测试环境&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;关键配置&lt;/strong&gt;:&lt;/li&gt;
 &lt;/ul&gt;
-&lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"&gt;&lt;code class="language-yaml" data-lang="yaml"&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#f92672"&gt;revisionHistoryLimit&lt;/span&gt;: &lt;span style="color:#ae81ff"&gt;10&lt;/span&gt; &lt;span style="color:#75715e"&gt;# 设置最多留存历史修改版本方便测试GC，回滚时有选择, 如果为0则不记录历史版本&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"&gt;&lt;code class="language-yaml" data-lang="yaml"&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#f92672"&gt;revisionHistoryLimit&lt;/span&gt;: &lt;span style="color:#ae81ff"&gt;10&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#f92672"&gt;strategy&lt;/span&gt;:
 &lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; &lt;span style="color:#f92672"&gt;rollingUpdate&lt;/span&gt;:
-&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; &lt;span style="color:#f92672"&gt;maxSurge&lt;/span&gt;: &lt;span style="color:#ae81ff"&gt;25&lt;/span&gt;&lt;span style="color:#ae81ff"&gt;% &lt;/span&gt; &lt;span style="color:#75715e"&gt;# 更新时允许超出的比例&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; &lt;span style="color:#f92672"&gt;maxUnavailable&lt;/span&gt;: &lt;span style="color:#ae81ff"&gt;25&lt;/span&gt;&lt;span style="color:#ae81ff"&gt;% &lt;/span&gt; &lt;span style="color:#75715e"&gt;# 最大不可用比例&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#f92672"&gt;terminationGracePeriodSeconds&lt;/span&gt;: &lt;span style="color:#ae81ff"&gt;30&lt;/span&gt; &lt;span style="color:#75715e"&gt;# 优雅停机， pod删除时最大宽限时间&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id="意外发现"&gt;意外发现&lt;/h2&gt;
-&lt;p&gt;&lt;code&gt;kubectl rollout undo --to-revision=1&lt;/code&gt; 执行后：&lt;/p&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; &lt;span style="color:#f92672"&gt;maxSurge&lt;/span&gt;: &lt;span style="color:#ae81ff"&gt;25&lt;/span&gt;&lt;span style="color:#ae81ff"&gt;%&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; &lt;span style="color:#f92672"&gt;maxUnavailable&lt;/span&gt;: &lt;span style="color:#ae81ff"&gt;25&lt;/span&gt;&lt;span style="color:#ae81ff"&gt;%&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#f92672"&gt;terminationGracePeriodSeconds&lt;/span&gt;: &lt;span style="color:#ae81ff"&gt;30&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id="问题"&gt;问题&lt;/h2&gt;
+&lt;p&gt;执行 &lt;code&gt;kubectl rollout undo --to-revision=1&lt;/code&gt; 后：&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;预期：回到 revision 1， 但revision 1 还在历史记录里&lt;/li&gt;
-&lt;li&gt;实际：&lt;strong&gt;revision 1 消失了&lt;/strong&gt;，生成了新的 revision 3（3 的配置和 1 一样）
-revision记录
-&lt;img alt="undo1" loading="lazy" src="https://wamudus.github.io/posts/k8s-rollout-review/undo_1.png"&gt;
-回滚后
-&lt;img alt="undo2" loading="lazy" src="https://wamudus.github.io/posts/k8s-rollout-review/undo_2.png"&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;预期&lt;/strong&gt;: 回到 revision 1，且 revision 1 保留在历史记录里&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;实际&lt;/strong&gt;: revision 1 &lt;strong&gt;消失了&lt;/strong&gt;，生成了新的 revision 3（配置和 1 一样）&lt;/li&gt;
 &lt;/ul&gt;
+&lt;p&gt;revision 记录：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="undo1" loading="lazy" src="https://wamudus.github.io/posts/k8s-rollout-review/undo_1.png"&gt;&lt;/p&gt;
+&lt;p&gt;回滚后：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="undo2" loading="lazy" src="https://wamudus.github.io/posts/k8s-rollout-review/undo_2.png"&gt;&lt;/p&gt;
 &lt;h2 id="复现步骤"&gt;复现步骤&lt;/h2&gt;
-&lt;h4 id="1-制造多个revision记录"&gt;1. 制造多个revision记录&lt;/h4&gt;
+&lt;p&gt;&lt;strong&gt;1. 制造多个 revision&lt;/strong&gt;&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#66d9ef"&gt;for&lt;/span&gt; i in &lt;span style="color:#f92672"&gt;{&lt;/span&gt;1..5&lt;span style="color:#f92672"&gt;}&lt;/span&gt;; &lt;span style="color:#66d9ef"&gt;do&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; kubectl set image deployment/nginx-deployment my-nginx&lt;span style="color:#f92672"&gt;=&lt;/span&gt;nginx:1.$i --record
 &lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#66d9ef"&gt;done&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;img alt="review_1" loading="lazy" src="https://wamudus.github.io/posts/k8s-rollout-review/review_1.png"&gt;
-查看revision记录
-&lt;img alt="review_2" loading="lazy" src="https://wamudus.github.io/posts/k8s-rollout-review/review_2.png"&gt;&lt;/p&gt;
-&lt;h4 id="2-回滚验证"&gt;2. 回滚验证&lt;/h4&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;img alt="review_1" loading="lazy" src="https://wamudus.github.io/posts/k8s-rollout-review/review_1.png"&gt;&lt;/p&gt;
+&lt;p&gt;查看 revision 记录：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="review_2" loading="lazy" src="https://wamudus.github.io/posts/k8s-rollout-review/review_2.png"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;2. 回滚验证&lt;/strong&gt;&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;kubectl rollout undo --to-revision&lt;span style="color:#f92672"&gt;=&lt;/span&gt;&lt;span style="color:#ae81ff"&gt;4&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;kubectl rollout undo --to-revision&lt;span style="color:#f92672"&gt;=&lt;/span&gt;&lt;span style="color:#ae81ff"&gt;9&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;img alt="undo_3" loading="lazy" src="https://wamudus.github.io/posts/k8s-rollout-review/undo_3.png"&gt;&lt;/p&gt;</description></item><item><title>K8s 折腾记录：Startup Probe 权限排障与 YAML 字段陷阱</title><link>https://wamudus.github.io/posts/permission/probe-debug/</link><pubDate>Mon, 13 Apr 2026 09:22:00 +0800</pubDate><guid>https://wamudus.github.io/posts/permission/probe-debug/</guid><description>记录 K8s Startup Probe 权限排障过程，以及 restartPolicy 字段层级陷阱的发现</description></item></channel></rss>
