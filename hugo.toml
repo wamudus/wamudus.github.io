@@ -1,6 +1,6 @@
 baseURL = 'https://wamudus.github.io/'
 languageCode = 'zh-CN'
-title = '运维随笔'
+title = '基础设施随笔'
 theme = 'PaperMod'
 
 [taxonomies]
