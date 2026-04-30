@@ -5,38 +5,38 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="robots" content="noindex, nofollow">
-<title>K8s rollout 回滚机制的一个反直觉现象 | K8s 学习手记</title>
+<title>K8s rollout undo 回滚会吃掉历史版本号 | 基础设施随笔</title>
 <meta name="keywords" content="k8s, 实验记录">
-<meta name="description" content="原本打算记录Deployment rollout undo回滚机制
-环境信息（可复现）
+<meta name="description" content="本来只是想测试下 Deployment 的 rollout undo 机制，结果发现一个反直觉的行为。
+环境信息
 
-K8s 版本: v1.35.3 (kubectl client v1.35.3)
+K8s 版本: v1.35.3
 集群规模: 一主两从测试环境
 关键配置:
 
-revisionHistoryLimit: 10      # 设置最多留存历史修改版本方便测试GC，回滚时有选择, 如果为0则不记录历史版本
+revisionHistoryLimit: 10
 strategy:
   rollingUpdate:
-    maxSurge: 25%            # 更新时允许超出的比例
-    maxUnavailable: 25%      # 最大不可用比例
-terminationGracePeriodSeconds: 30  # 优雅停机， pod删除时最大宽限时间
-意外发现
-kubectl rollout undo --to-revision=1 执行后：
+    maxSurge: 25%
+    maxUnavailable: 25%
+terminationGracePeriodSeconds: 30
+问题
+执行 kubectl rollout undo --to-revision=1 后：
 
-预期：回到 revision 1， 但revision 1 还在历史记录里
-实际：revision 1 消失了，生成了新的 revision 3（3 的配置和 1 一样）
-revision记录
+预期: 回到 revision 1，且 revision 1 保留在历史记录里
+实际: revision 1 消失了，生成了新的 revision 3（配置和 1 一样）
 
-回滚后
+revision 记录：
 
+回滚后：
 
 复现步骤
-1. 制造多个revision记录
+1. 制造多个 revision
 for i in {1..5}; do
   kubectl set image deployment/nginx-deployment my-nginx=nginx:1.$i --record
 done
 
-查看revision记录
+查看 revision 记录：
 
 2. 回滚验证
 kubectl rollout undo --to-revision=4
@@ -104,7 +104,7 @@ kubectl rollout undo --to-revision=9
     <header class="header">
     <nav class="header-nav">
         <div class="logo">
-            <a href="http://localhost:1313/" accesskey="h" title="K8s 学习手记 (Alt + H)">K8s 学习手记</a>
+            <a href="http://localhost:1313/" accesskey="h" title="基础设施随笔 (Alt + H)">基础设施随笔</a>
             <div class="logo-switches">
                 <button id="theme-toggle" class="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
                     <svg class="moon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
@@ -163,7 +163,7 @@ kubectl rollout undo --to-revision=9
   <header class="post-header">
     
     <h1 class="post-title entry-hint-parent">
-      K8s rollout 回滚机制的一个反直觉现象
+      K8s rollout undo 回滚会吃掉历史版本号
     </h1>
     <div class="post-meta"><span title='2026-04-14 00:00:00 +0000 UTC'>April 14, 2026</span>&nbsp;·&nbsp;<span>1 min</span>
 
@@ -175,23 +175,11 @@ kubectl rollout undo --to-revision=9
 
     <div class="inner"><ul>
             <li>
-                <a href="#%e5%8e%9f%e6%9c%ac%e6%89%93%e7%ae%97%e8%ae%b0%e5%bd%95deployment-rollout-undo%e5%9b%9e%e6%bb%9a%e6%9c%ba%e5%88%b6" aria-label="原本打算记录Deployment rollout undo回滚机制">原本打算记录Deployment rollout undo回滚机制</a></li>
+                <a href="#%e7%8e%af%e5%a2%83%e4%bf%a1%e6%81%af" aria-label="环境信息">环境信息</a></li>
             <li>
-                <a href="#%e7%8e%af%e5%a2%83%e4%bf%a1%e6%81%af%e5%8f%af%e5%a4%8d%e7%8e%b0" aria-label="环境信息（可复现）">环境信息（可复现）</a></li>
+                <a href="#%e9%97%ae%e9%a2%98" aria-label="问题">问题</a></li>
             <li>
-                <a href="#%e6%84%8f%e5%a4%96%e5%8f%91%e7%8e%b0" aria-label="意外发现">意外发现</a></li>
-            <li>
-                <a href="#%e5%a4%8d%e7%8e%b0%e6%ad%a5%e9%aa%a4" aria-label="复现步骤">复现步骤</a><ul>
-                    <ul>
-                    
-            <li>
-                <a href="#1-%e5%88%b6%e9%80%a0%e5%a4%9a%e4%b8%aarevision%e8%ae%b0%e5%bd%95" aria-label="1. 制造多个revision记录">1. 制造多个revision记录</a></li>
-            <li>
-                <a href="#2-%e5%9b%9e%e6%bb%9a%e9%aa%8c%e8%af%81" aria-label="2. 回滚验证">2. 回滚验证</a></li>
-            <li>
-                <a href="#3-%e5%8e%86%e5%8f%b2%e8%ae%b0%e5%bd%95revision-3-5-1049-%e6%b2%a1%e4%ba%86%e5%87%ba%e7%8e%b0%e4%ba%86-10%e5%92%8c11" aria-label="3. 历史记录：revision 3, 5&hellip; 10（4,9 没了，出现了 10和11）">3. 历史记录：revision 3, 5&hellip; 10（4,9 没了，出现了 10和11）</a></li></ul>
-                </ul>
-            </li>
+                <a href="#%e5%a4%8d%e7%8e%b0%e6%ad%a5%e9%aa%a4" aria-label="复现步骤">复现步骤</a></li>
             <li>
                 <a href="#%e7%bb%93%e8%ae%ba" aria-label="结论">结论</a>
             </li>
@@ -199,45 +187,46 @@ kubectl rollout undo --to-revision=9
     </div>
 </details>
 
-  <div class="post-content md-content"><h2 id="原本打算记录deployment-rollout-undo回滚机制">原本打算记录Deployment rollout undo回滚机制<a hidden class="anchor" aria-hidden="true" href="#原本打算记录deployment-rollout-undo回滚机制">#</a></h2>
-<h2 id="环境信息可复现">环境信息（可复现）<a hidden class="anchor" aria-hidden="true" href="#环境信息可复现">#</a></h2>
+  <div class="post-content md-content"><p>本来只是想测试下 Deployment 的 rollout undo 机制，结果发现一个反直觉的行为。</p>
+<h2 id="环境信息">环境信息<a hidden class="anchor" aria-hidden="true" href="#环境信息">#</a></h2>
 <ul>
-<li><strong>K8s 版本</strong>: v1.35.3 (kubectl client v1.35.3)</li>
+<li><strong>K8s 版本</strong>: v1.35.3</li>
 <li><strong>集群规模</strong>: 一主两从测试环境</li>
 <li><strong>关键配置</strong>:</li>
 </ul>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">revisionHistoryLimit</span>: <span style="color:#ae81ff">10</span>      <span style="color:#75715e"># 设置最多留存历史修改版本方便测试GC，回滚时有选择, 如果为0则不记录历史版本</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">revisionHistoryLimit</span>: <span style="color:#ae81ff">10</span>
 </span></span><span style="display:flex;"><span><span style="color:#f92672">strategy</span>:
 </span></span><span style="display:flex;"><span>  <span style="color:#f92672">rollingUpdate</span>:
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">maxSurge</span>: <span style="color:#ae81ff">25</span><span style="color:#ae81ff">%           </span> <span style="color:#75715e"># 更新时允许超出的比例</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">maxUnavailable</span>: <span style="color:#ae81ff">25</span><span style="color:#ae81ff">%     </span> <span style="color:#75715e"># 最大不可用比例</span>
-</span></span><span style="display:flex;"><span><span style="color:#f92672">terminationGracePeriodSeconds</span>: <span style="color:#ae81ff">30</span>  <span style="color:#75715e"># 优雅停机， pod删除时最大宽限时间</span>
-</span></span></code></pre></div><h2 id="意外发现">意外发现<a hidden class="anchor" aria-hidden="true" href="#意外发现">#</a></h2>
-<p><code>kubectl rollout undo --to-revision=1</code> 执行后：</p>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">maxSurge</span>: <span style="color:#ae81ff">25</span><span style="color:#ae81ff">%</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">maxUnavailable</span>: <span style="color:#ae81ff">25</span><span style="color:#ae81ff">%</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">terminationGracePeriodSeconds</span>: <span style="color:#ae81ff">30</span>
+</span></span></code></pre></div><h2 id="问题">问题<a hidden class="anchor" aria-hidden="true" href="#问题">#</a></h2>
+<p>执行 <code>kubectl rollout undo --to-revision=1</code> 后：</p>
 <ul>
-<li>预期：回到 revision 1， 但revision 1 还在历史记录里</li>
-<li>实际：<strong>revision 1 消失了</strong>，生成了新的 revision 3（3 的配置和 1 一样）
-revision记录
-<img alt="undo1" loading="lazy" src="/posts/k8s-rollout-review/undo_1.png">
-回滚后
-<img alt="undo2" loading="lazy" src="/posts/k8s-rollout-review/undo_2.png"></li>
+<li><strong>预期</strong>: 回到 revision 1，且 revision 1 保留在历史记录里</li>
+<li><strong>实际</strong>: revision 1 <strong>消失了</strong>，生成了新的 revision 3（配置和 1 一样）</li>
 </ul>
+<p>revision 记录：</p>
+<p><img alt="undo1" loading="lazy" src="/posts/k8s-rollout-review/undo_1.png"></p>
+<p>回滚后：</p>
+<p><img alt="undo2" loading="lazy" src="/posts/k8s-rollout-review/undo_2.png"></p>
 <h2 id="复现步骤">复现步骤<a hidden class="anchor" aria-hidden="true" href="#复现步骤">#</a></h2>
-<h4 id="1-制造多个revision记录">1. 制造多个revision记录<a hidden class="anchor" aria-hidden="true" href="#1-制造多个revision记录">#</a></h4>
+<p><strong>1. 制造多个 revision</strong></p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#66d9ef">for</span> i in <span style="color:#f92672">{</span>1..5<span style="color:#f92672">}</span>; <span style="color:#66d9ef">do</span>
 </span></span><span style="display:flex;"><span>  kubectl set image deployment/nginx-deployment my-nginx<span style="color:#f92672">=</span>nginx:1.$i --record
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">done</span>
-</span></span></code></pre></div><p><img alt="review_1" loading="lazy" src="/posts/k8s-rollout-review/review_1.png">
-查看revision记录
-<img alt="review_2" loading="lazy" src="/posts/k8s-rollout-review/review_2.png"></p>
-<h4 id="2-回滚验证">2. 回滚验证<a hidden class="anchor" aria-hidden="true" href="#2-回滚验证">#</a></h4>
+</span></span></code></pre></div><p><img alt="review_1" loading="lazy" src="/posts/k8s-rollout-review/review_1.png"></p>
+<p>查看 revision 记录：</p>
+<p><img alt="review_2" loading="lazy" src="/posts/k8s-rollout-review/review_2.png"></p>
+<p><strong>2. 回滚验证</strong></p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl rollout undo --to-revision<span style="color:#f92672">=</span><span style="color:#ae81ff">4</span>
 </span></span><span style="display:flex;"><span>kubectl rollout undo --to-revision<span style="color:#f92672">=</span><span style="color:#ae81ff">9</span>
 </span></span></code></pre></div><p><img alt="undo_3" loading="lazy" src="/posts/k8s-rollout-review/undo_3.png"></p>
-<h4 id="3-历史记录revision-3-5-1049-没了出现了-10和11">3. 历史记录：revision 3, 5&hellip; 10（4,9 没了，出现了 10和11）<a hidden class="anchor" aria-hidden="true" href="#3-历史记录revision-3-5-1049-没了出现了-10和11">#</a></h4>
+<p><strong>3. 结果</strong></p>
+<p>revision 3, 5&hellip; 10 还在，但 4 和 9 没了，取而代之的是 10 和 11：</p>
 <p><img alt="review_3" loading="lazy" src="/posts/k8s-rollout-review/review_3.png"></p>
 <h2 id="结论">结论<a hidden class="anchor" aria-hidden="true" href="#结论">#</a></h2>
-<p>Undo 不是&quot;回到&quot;某个版本，而是&quot;基于某个版本创建新版本并<strong>删除原版本号</strong>&quot;。反复 undo 会洗光历史。</p>
+<p><code>undo</code> 不是&quot;回到&quot;某个版本，而是<strong>基于该版本的配置创建一个新 revision，同时删掉被回滚的那个版本号</strong>。反复 undo 会把历史版本号洗光。</p>
 
 
   </div>
@@ -252,7 +241,7 @@ revision记录
     </main>
     
 <footer class="footer">
-        <span>&copy; 2026 <a href="http://localhost:1313/">K8s 学习手记</a></span> · 
+        <span>&copy; 2026 <a href="http://localhost:1313/">基础设施随笔</a></span> · 
 
     <span>
         Powered by

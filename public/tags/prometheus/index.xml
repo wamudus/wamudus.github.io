@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
-    <title>Prometheus on K8s 学习手记</title>
+    <title>Prometheus on 基础设施随笔</title>
     <link>http://localhost:1313/tags/prometheus/</link>
-    <description>Recent content in Prometheus on K8s 学习手记</description>
+    <description>Recent content in Prometheus on 基础设施随笔</description>
     <generator>Hugo</generator>
     <language>zh-CN</language>
     <lastBuildDate>Thu, 23 Apr 2026 09:20:00 +0800</lastBuildDate>

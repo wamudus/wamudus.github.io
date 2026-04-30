@@ -5,9 +5,9 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="robots" content="noindex, nofollow">
-<title>Homelab | K8s 学习手记</title>
+<title>Homelab | 基础设施随笔</title>
 <meta name="keywords" content="">
-<meta name="description" content="备考 CKA，记录学习过程">
+<meta name="description" content="记录 homelab 基础设施搭建、K8s 排障与可观测性实践">
 <meta name="author" content="">
 <link rel="canonical" href="http://localhost:1313/tags/homelab/">
 <link crossorigin="anonymous" href="/assets/css/stylesheet.9e010bc22ef5794c0560b82f657f315607f24d8b05e0088e95b900c22246f5c0.css" integrity="sha256-ngELwi71eUwFYLgvZX8xVgfyTYsF4AiOlbkAwiJG9cA=" rel="preload stylesheet" as="style">
@@ -71,7 +71,7 @@
     <header class="header">
     <nav class="header-nav">
         <div class="logo">
-            <a href="http://localhost:1313/" accesskey="h" title="K8s 学习手记 (Alt + H)">K8s 学习手记</a>
+            <a href="http://localhost:1313/" accesskey="h" title="基础设施随笔 (Alt + H)">基础设施随笔</a>
             <div class="logo-switches">
                 <button id="theme-toggle" class="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
                     <svg class="moon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
@@ -138,16 +138,34 @@
   </header>
   <div class="entry-content">
     <p>前言 最近在整理 homelab 的云原生技术栈，目标是能独立复现一套完整的可观测平台。本文记录从 0 到 1 的过程，包括踩过的坑和最终方案。
-环境说明 宿主机: RHEL 9 / Rocky Linux 9 容器运行时: Podman &#43; Podman Compose 网络: 桥接网络 docker-compose_observe（10.90.0.0/24） 核心组件: Prometheus v2.51.2（指标采集） Loki 3.4.1（日志聚合） Grafana 10.4.2（可视化） Promtail 3.4.1（日志采集） Alertmanager v0.27.0（告警路由） 架构设计 核心配置 1. Docker Compose version: &#34;3.8&#34; networks: observe: driver: bridge ipam: config: - subnet: 10.90.0.0/24 volumes: prometheus-data: grafana-data: alertmanager-data: loki-data: promtail-data: services: prometheus: image: docker.io/prom/prometheus:v2.51.2 container_name: prometheus networks: - observe ports: - &#34;9090:9090&#34; volumes: - prometheus-data:/prometheus - ./prometheus.yml:/prometheus/prometheus.yml:ro - ./alert_rules.yml:/prometheus/alert_rules.yml:ro command: - &#39;--config.file=/prometheus/prometheus.yml&#39; - &#39;--storage.tsdb.path=/prometheus&#39; restart: unless-stopped node-exporter: image: docker.io/prom/node-exporter:v1.7.0 container_name: node-exporter networks: - observe volumes: - /proc:/host/proc:ro - /sys:/host/sys:ro - /:/rootfs:ro command: - &#39;--path.procfs=/host/proc&#39; - &#39;--path.sysfs=/host/sys&#39; restart: unless-stopped alertmanager: image: docker.io/prom/alertmanager:v0.27.0 container_name: alertmanager networks: - observe ports: - &#34;9093:9093&#34; volumes: - ./alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro - alertmanager-data:/alertmanager restart: unless-stopped grafana: image: docker.io/grafana/grafana:10.4.2 container_name: grafana networks: - observe ports: - &#34;3000:3000&#34; environment: - GF_SECURITY_ADMIN_USER=admin - GF_SECURITY_ADMIN_PASSWORD=admin - GF_USERS_ALLOW_SIGN_UP=false - GF_SERVER_ROOT_URL=http://localhost:3000 volumes: - grafana-data:/var/lib/grafana - ./grafana/provisioning:/etc/grafana/provisioning:ro restart: unless-stopped depends_on: - prometheus - loki loki: image: docker.io/grafana/loki:3.4.1 container_name: loki networks: - observe ports: - &#34;3100:3100&#34; volumes: - ./loki-config.yaml:/etc/loki/local-config.yaml:ro - loki-data:/loki command: - &#34;--config.file=/etc/loki/local-config.yaml&#34; promtail: image: docker.io/grafana/promtail:3.4.1 container_name: promtail networks: - observe volumes: - promtail-data:/tmp/position - ./promtail-config.yaml:/etc/promtail/promtail-config.yaml - /var/log:/var/log:ro command: - &#34;--config.file=/etc/promtail/promtail-config.yaml&#34; webhook-dingtalk: image: docker.io/timonwong/prometheus-webhook-dingtalk:v2.1.0 container_name: dingtalk networks: - observe ports: - &#34;8060:8060&#34; volumes: - ./dingtalk.yml:/etc/prometheus-webhook-dingtalk/config.yml - ./dingtalk.tmpl:/etc/prometheus-webhook-dingtalk/dingtalk.tmpl 2. Loki 配置 auth_enabled: false server: http_listen_port: 3100 grpc_listen_port: 9096 log_level: info grpc_server_max_concurrent_streams: 1000 common: path_prefix: /tmp/loki storage: filesystem: chunks_directory: /tmp/loki/chunks rules_directory: /tmp/loki/rules replication_factor: 1 ring: kvstore: store: inmemory schema_config: configs: - from: 2020-10-24 store: tsdb object_store: filesystem schema: v13 index: prefix: index_ period: 24h limits_config: allow_structured_metadata: true volume_enabled: true metric_aggregation_enabled: true pattern_ingester: enabled: true metric_aggregation: loki_address: localhost:3100 frontend: encoding: protobuf 3. Prometheus 告警规则 聚焦三个核心资源：CPU 看趋势、内存和磁盘看绝对剩余。
-...</p>
+项目已开源：github.com/wamudus/node-observability-baseline
+环境说明 宿主机: RHEL 9 / Rocky Linux 9 容器运行时: Podman &#43; Podman Compose 网络: 桥接网络 observe（10.90.0.0/24） 核心组件: Prometheus v2.51.2（指标采集） Loki 3.4.1（日志聚合） Grafana 10.4.2（可视化） Promtail 3.4.1（日志采集） Alertmanager v0.27.0（告警路由与抑制） prometheus-webhook-dingtalk v2.1.0（钉钉告警适配） 仓库结构 .
+├── docker-compose.yml # 全栈编排定义
+├── README.md # 项目文档
+├── prometheus.yml # Prometheus 抓取配置 &amp; 告警接入
+├── alert_rules.yml # Prometheus 告警规则（CPU/内存/磁盘/只读）
+├── node-randon.yml # 文件服务发现配置（预留）
+├── alertmanager.yml # Alertmanager 路由 &amp; 抑制规则
+├── dingtalk.yml # 钉钉 Webhook 配置
+├── dingtalk.tmpl # 钉钉消息 Markdown 模板源文件
+├── loki-config.yaml # Loki 存储 &amp; 索引配置
+├── promtail-config.yaml # Promtail 日志抓取配置
+└── grafana/
+└── provisioning/
+├── dashboards/
+│ ├── dashboard.yml # Dashboard 自动加载声明
+│ ├── 1860_rev45.json # Node Exporter Full（社区成熟主机监控模板）
+│ └── Loki-Dashboard-fixed.json # Loki 日志看板（变量化改造）
+└── datasources/
+└── datasource.yml # 数据源自动加载声明 架构设计 ...</p>
   </div>
-  <footer class="entry-footer"><span title='2026-04-23 09:20:00 +0800 CST'>April 23, 2026</span>&nbsp;·&nbsp;<span>3 min</span></footer>
+  <footer class="entry-footer"><span title='2026-04-23 09:20:00 +0800 CST'>April 23, 2026</span>&nbsp;·&nbsp;<span>6 min</span></footer>
   <a class="entry-link" aria-label="post link to 从零搭建 Podman 可观测平台：Prometheus &#43; Loki &#43; Grafana 实践" href="http://localhost:1313/posts/observability-lab/"></a>
 </article>
     </main>
     
 <footer class="footer">
-        <span>&copy; 2026 <a href="http://localhost:1313/">K8s 学习手记</a></span> · 
+        <span>&copy; 2026 <a href="http://localhost:1313/">基础设施随笔</a></span> · 
 
     <span>
         Powered by

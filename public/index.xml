@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
-    <title>K8s 学习手记</title>
+    <title>基础设施随笔</title>
     <link>http://localhost:1313/</link>
-    <description>Recent content on K8s 学习手记</description>
+    <description>Recent content on 基础设施随笔</description>
     <generator>Hugo</generator>
     <language>zh-CN</language>
     <lastBuildDate>Thu, 23 Apr 2026 09:20:00 +0800</lastBuildDate>
@@ -16,49 +16,49 @@
       <description>在裸机 Podman 环境下从零搭建完整的可观测链路，包括指标监控、日志收集、可视化仪表盘和钉钉告警。</description>
     </item>
     <item>
-      <title>从&#39;资源恐慌&#39;到生产级 TLS：一次跨层 K8S 排查实录</title>
+      <title>K8s Pod Pending 排查：资源分配和 TLS 证书两个问题</title>
       <link>http://localhost:1313/posts/resource_limited_quist/</link>
       <pubDate>Wed, 15 Apr 2026 11:24:00 +0800</pubDate>
       <guid>http://localhost:1313/posts/resource_limited_quist/</guid>
-      <description>记录从 K8S 调度失败穿透到 VMware 虚拟化层与证书基础设施的完整排查链，涉及 NUMA 拓扑陷阱与 kubelet TLS bootstrap 机制。</description>
+      <description>测试环境部署 nginx Pod 卡在 Pending，排查发现 VMware CPU 分配配错了，metrics-server 又因为 TLS 证书不含 Node IP 起不来。</description>
     </item>
     <item>
-      <title>K8s rollout 回滚机制的一个反直觉现象</title>
+      <title>K8s rollout undo 回滚会吃掉历史版本号</title>
       <link>http://localhost:1313/posts/k8s-rollout-review/</link>
       <pubDate>Tue, 14 Apr 2026 00:00:00 +0000</pubDate>
       <guid>http://localhost:1313/posts/k8s-rollout-review/</guid>
-      <description>&lt;h2 id=&#34;原本打算记录deployment-rollout-undo回滚机制&#34;&gt;原本打算记录Deployment rollout undo回滚机制&lt;/h2&gt;
-&lt;h2 id=&#34;环境信息可复现&#34;&gt;环境信息（可复现）&lt;/h2&gt;
+      <description>&lt;p&gt;本来只是想测试下 Deployment 的 rollout undo 机制，结果发现一个反直觉的行为。&lt;/p&gt;
+&lt;h2 id=&#34;环境信息&#34;&gt;环境信息&lt;/h2&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;K8s 版本&lt;/strong&gt;: v1.35.3 (kubectl client v1.35.3)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;K8s 版本&lt;/strong&gt;: v1.35.3&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;集群规模&lt;/strong&gt;: 一主两从测试环境&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;关键配置&lt;/strong&gt;:&lt;/li&gt;
 &lt;/ul&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;revisionHistoryLimit&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt;      &lt;span style=&#34;color:#75715e&#34;&gt;# 设置最多留存历史修改版本方便测试GC，回滚时有选择, 如果为0则不记录历史版本&lt;/span&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;revisionHistoryLimit&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;strategy&lt;/span&gt;:
 &lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#f92672&#34;&gt;rollingUpdate&lt;/span&gt;:
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;maxSurge&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;25&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;%           &lt;/span&gt; &lt;span style=&#34;color:#75715e&#34;&gt;# 更新时允许超出的比例&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;maxUnavailable&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;25&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;%     &lt;/span&gt; &lt;span style=&#34;color:#75715e&#34;&gt;# 最大不可用比例&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;terminationGracePeriodSeconds&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;30&lt;/span&gt;  &lt;span style=&#34;color:#75715e&#34;&gt;# 优雅停机， pod删除时最大宽限时间&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;意外发现&#34;&gt;意外发现&lt;/h2&gt;
-&lt;p&gt;&lt;code&gt;kubectl rollout undo --to-revision=1&lt;/code&gt; 执行后：&lt;/p&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;maxSurge&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;25&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;%&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;maxUnavailable&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;25&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;%&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;terminationGracePeriodSeconds&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;30&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;问题&#34;&gt;问题&lt;/h2&gt;
+&lt;p&gt;执行 &lt;code&gt;kubectl rollout undo --to-revision=1&lt;/code&gt; 后：&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;预期：回到 revision 1， 但revision 1 还在历史记录里&lt;/li&gt;
-&lt;li&gt;实际：&lt;strong&gt;revision 1 消失了&lt;/strong&gt;，生成了新的 revision 3（3 的配置和 1 一样）
-revision记录
-&lt;img alt=&#34;undo1&#34; loading=&#34;lazy&#34; src=&#34;http://localhost:1313/posts/k8s-rollout-review/undo_1.png&#34;&gt;
-回滚后
-&lt;img alt=&#34;undo2&#34; loading=&#34;lazy&#34; src=&#34;http://localhost:1313/posts/k8s-rollout-review/undo_2.png&#34;&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;预期&lt;/strong&gt;: 回到 revision 1，且 revision 1 保留在历史记录里&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;实际&lt;/strong&gt;: revision 1 &lt;strong&gt;消失了&lt;/strong&gt;，生成了新的 revision 3（配置和 1 一样）&lt;/li&gt;
 &lt;/ul&gt;
+&lt;p&gt;revision 记录：&lt;/p&gt;
+&lt;p&gt;&lt;img alt=&#34;undo1&#34; loading=&#34;lazy&#34; src=&#34;http://localhost:1313/posts/k8s-rollout-review/undo_1.png&#34;&gt;&lt;/p&gt;
+&lt;p&gt;回滚后：&lt;/p&gt;
+&lt;p&gt;&lt;img alt=&#34;undo2&#34; loading=&#34;lazy&#34; src=&#34;http://localhost:1313/posts/k8s-rollout-review/undo_2.png&#34;&gt;&lt;/p&gt;
 &lt;h2 id=&#34;复现步骤&#34;&gt;复现步骤&lt;/h2&gt;
-&lt;h4 id=&#34;1-制造多个revision记录&#34;&gt;1. 制造多个revision记录&lt;/h4&gt;
+&lt;p&gt;&lt;strong&gt;1. 制造多个 revision&lt;/strong&gt;&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; i in &lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;1..5&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;; &lt;span style=&#34;color:#66d9ef&#34;&gt;do&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  kubectl set image deployment/nginx-deployment my-nginx&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;nginx:1.$i --record
 &lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;done&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;img alt=&#34;review_1&#34; loading=&#34;lazy&#34; src=&#34;http://localhost:1313/posts/k8s-rollout-review/review_1.png&#34;&gt;
-查看revision记录
-&lt;img alt=&#34;review_2&#34; loading=&#34;lazy&#34; src=&#34;http://localhost:1313/posts/k8s-rollout-review/review_2.png&#34;&gt;&lt;/p&gt;
-&lt;h4 id=&#34;2-回滚验证&#34;&gt;2. 回滚验证&lt;/h4&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;img alt=&#34;review_1&#34; loading=&#34;lazy&#34; src=&#34;http://localhost:1313/posts/k8s-rollout-review/review_1.png&#34;&gt;&lt;/p&gt;
+&lt;p&gt;查看 revision 记录：&lt;/p&gt;
+&lt;p&gt;&lt;img alt=&#34;review_2&#34; loading=&#34;lazy&#34; src=&#34;http://localhost:1313/posts/k8s-rollout-review/review_2.png&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;2. 回滚验证&lt;/strong&gt;&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;kubectl rollout undo --to-revision&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;4&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;kubectl rollout undo --to-revision&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;9&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;img alt=&#34;undo_3&#34; loading=&#34;lazy&#34; src=&#34;http://localhost:1313/posts/k8s-rollout-review/undo_3.png&#34;&gt;&lt;/p&gt;</description>
@@ -75,23 +75,35 @@ revision记录
       <link>http://localhost:1313/about/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       <guid>http://localhost:1313/about/</guid>
-      <description>&lt;p&gt;这是我在准备 &lt;a href=&#34;https://www.cncf.io/certification/cka/&#34;&gt;CKA (Certified Kubernetes Administrator)&lt;/a&gt; 认证过程中的技术踩坑记录。&lt;/p&gt;
+      <description>&lt;p&gt;这里是我在折腾 homelab 和云原生基础设施过程中的踩坑记录。&lt;/p&gt;
+&lt;h2 id=&#34;资质&#34;&gt;资质&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;RHCA&lt;/strong&gt;（红帽认证架构师，基础设施方向）
+&lt;a href=&#34;https://www.redhat.com/rhtapps/services/verify?certId=240-064-477&#34;&gt;验证链接&lt;/a&gt; · 证书编号 &lt;code&gt;240-064-477&lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;EX442 — Linux 性能调优&lt;/li&gt;
+&lt;li&gt;EX436 — 高可用集群（Pacemaker/Corosync/GFS2）&lt;/li&gt;
+&lt;li&gt;EX374 — Ansible Automation Platform&lt;/li&gt;
+&lt;li&gt;EX260 — Ceph 云存储&lt;/li&gt;
+&lt;li&gt;EX358 — 服务治理与自动化&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;现在在搞什么&#34;&gt;现在在搞什么&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;可观测平台&lt;/strong&gt;：基于 Prometheus + Loki + Grafana 的监控告警链路，已接入钉钉通知&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;K8s 实验环境&lt;/strong&gt;：用 Ansible 从裸机拉起 3 节点集群，计划把监控栈迁上去&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;博客即作品集&lt;/strong&gt;：把排查过程写成文章，面试时有东西讲&lt;/li&gt;
+&lt;/ul&gt;
 &lt;h2 id=&#34;记录原则&#34;&gt;记录原则&lt;/h2&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;每周 1-2 篇&lt;/strong&gt;：从实际故障中理解 K8s 设计哲学，而非死记硬背&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;问题闭环&lt;/strong&gt;：每篇都包含现象 → 排查 → 根因 → 验证的完整过程&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;持续更新&lt;/strong&gt;：面试时可作为&amp;quot;持续学习线路&amp;quot;的证据&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;从实际问题出发&lt;/strong&gt;：不背八股，只记自己踩过的坑和怎么爬出来的&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;可复现&lt;/strong&gt;：环境信息、版本号、配置都保留，半年后自己能看懂&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;闭环&lt;/strong&gt;：现象 → 排查 → 根因 → 验证，每篇都走完这个流程&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h2 id=&#34;当前进度&#34;&gt;当前进度&lt;/h2&gt;
+&lt;h2 id=&#34;相关项目&#34;&gt;相关项目&lt;/h2&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;input checked=&#34;&#34; disabled=&#34;&#34; type=&#34;checkbox&#34;&gt; Pod 生命周期与探针机制&lt;/li&gt;
-&lt;li&gt;&lt;input disabled=&#34;&#34; type=&#34;checkbox&#34;&gt; Service 与 DNS 解析&lt;/li&gt;
-&lt;li&gt;&lt;input disabled=&#34;&#34; type=&#34;checkbox&#34;&gt; 存储与 StatefulSet&lt;/li&gt;
-&lt;li&gt;&lt;input disabled=&#34;&#34; type=&#34;checkbox&#34;&gt; 网络策略与 CNI&lt;/li&gt;
-&lt;li&gt;&lt;input disabled=&#34;&#34; type=&#34;checkbox&#34;&gt; 集群升级与备份&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/wamudus/node-observability-baseline&#34;&gt;node-observability-baseline&lt;/a&gt;：Docker Compose 一键部署的监控告警基线&lt;/li&gt;
 &lt;/ul&gt;
 &lt;hr&gt;
-&lt;p&gt;&lt;em&gt;最后更新：2026-04-13&lt;/em&gt;&lt;/p&gt;</description>
+&lt;p&gt;&lt;em&gt;最后更新：2026-04-24&lt;/em&gt;&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
