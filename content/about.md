@@ -30,7 +30,7 @@ layout: "single"
 
 ## 相关项目
 
-- [homelab-observability](https://github.com/wamudus/homelab-observability)：Docker Compose 一键部署的监控告警基线
+- [homelab-observability](https://github.com/wamudus/node-observability-baseline)：Docker Compose 一键部署的监控告警基线
 
 ---
 
